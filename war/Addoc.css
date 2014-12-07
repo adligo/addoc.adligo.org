@@ -1,0 +1,22 @@
+.titleImageBackround {
+	background-color: wheat;
+}
+
+.menuView {
+	background-color: Silver;
+	font-size: 18px;
+	font-family: "Times New Roman", Times, serif;
+	
+	
+}
+
+.menuViewIndex {
+	font-size: 24px;
+}
+
+.adFrame {
+overflow-x: hidden;
+overflow-y: hidden;
+-ms-overflow-x: hidden;
+-ms-overflow-y: hidden;
+}
