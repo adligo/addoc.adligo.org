@@ -17,6 +17,7 @@ public class TreeNavigationView extends Composite {
   private Anchor currentVersionAnchor;
   private Anchor nextAnchor;
   private Anchor previousAnchor;
+  
   public TreeNavigationView() {
     
     VerticalPanel verticalPanel = new VerticalPanel();
@@ -80,6 +81,10 @@ public class TreeNavigationView extends Composite {
     currentVersionAnchor.setVisible(false);
     nextAnchor.setVisible(false);
     previousAnchor.setVisible(false);
+  }
+  
+  public void setDateModified(String date) {
+    dateLabel.setText(date);
   }
   
   public void showCurrentAnchor() {

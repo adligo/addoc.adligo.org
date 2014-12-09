@@ -17,4 +17,6 @@ public interface I_ArticleContent {
   public List<I_Article> getArticles();
 
   public List<I_ArticleTree> getArticleTrees();
+  
+  public String getLastModifiedDate();
 }

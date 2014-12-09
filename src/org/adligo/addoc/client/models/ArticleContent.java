@@ -41,5 +41,10 @@ public class ArticleContent  implements I_ArticleContent {
   public List<I_ArticleTree> getArticleTrees() {
     return articleTrees;
   }
+
+  @Override
+  public String getLastModifiedDate() {
+    return mutant.getLastModifiedDate();
+  }
   
 }

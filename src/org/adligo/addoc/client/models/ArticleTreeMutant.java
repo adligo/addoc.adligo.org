@@ -1,36 +1,19 @@
 package org.adligo.addoc.client.models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ArticleTreeMutant implements I_ArticleTree {
   private String date;
-  private Map<String,ArticleMutant> articles = new HashMap<String,ArticleMutant>();
-  private ArticleTreePathsMutant paths = new ArticleTreePathsMutant();
+  private I_NumberedTree numberedTree;
   
-  public ArticleTreeMutant(String niceDate) {
-    setDate(niceDate);
-  }
+  public ArticleTreeMutant() {}
   
   public ArticleTreeMutant(I_ArticleTree other) {
     setDate(other.getDate());
+    numberedTree = other.getNumberedTree();
   }
   
-  public void addArticle(String path, ArticleMutant article) {
-    articles.put(path, article);
-    paths.addPath(path);
-  }
   
-  public List<String> getTop() {
-    return paths.getTop();
-  }
-    
-  public List<String> getSub(String parentPath) {
-    return paths.getSub(parentPath);
-  }
-
   /* (non-Javadoc)
    * @see org.adligo.addoc.shared.models.I_ArticleTree#getDate()
    */
@@ -39,15 +22,7 @@ public class ArticleTreeMutant implements I_ArticleTree {
     return date;
   }
   
-  /* (non-Javadoc)
-   * @see org.adligo.addoc.shared.models.I_ArticleTree#getArticle(java.lang.String)
-   */
-  @Override
-  public I_Article getArticle(String path) {
-    return articles.get(path);
-  }
-
-  private void setDate(String date) {
+  public void setDate(String date) {
     if (date == null) {
       throw new IllegalArgumentException("Null article tree dates are not allowed.");
     }
@@ -55,12 +30,22 @@ public class ArticleTreeMutant implements I_ArticleTree {
   }
 
   @Override
-  public List<String> getAllOrdered() {
-    return paths.getAllOrdered();
+  public List<Integer> getIds(int [] from) {
+    return numberedTree.getIds(from);
   }
 
   @Override
-  public List<I_Article> getArticles() {
-     return new ArrayList<I_Article>(articles.values());
+  public List<Integer> getTop() {
+    return numberedTree.getTop();
   }
+
+  @Override
+  public I_NumberedTree getNumberedTree() {
+    return numberedTree;
+  }
+
+  public void setNumberedTree(I_NumberedTree numberedTree) {
+    this.numberedTree = numberedTree;
+  }
+
 }

@@ -1,5 +1,9 @@
 package org.adligo.addoc.client.models;
 
+import com.google.gwt.core.shared.GWT;
+
+import org.adligo.addoc.client.i18n.AddocI18nConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +12,11 @@ public class ArticleContentMutant implements I_ArticleContent {
   private List<Article> articles = new ArrayList<Article>();
   private List<ArticleTree> articleTrees = new ArrayList<ArticleTree>();
   private long lastTreeDate = 0L;
+  private long lastArticleDate = 0L;
+  
+  private NiceDate niceDate = new NiceDate(
+      ((AddocI18nConstants) GWT.create(AddocI18nConstants.class)).getDateTimeFormat());
+  public ArticleContentMutant() {}
   
   public ArticleContentMutant(I_ArticleContent other) {
     List<I_Article> arts = other.getArticles();
@@ -25,16 +34,23 @@ public class ArticleContentMutant implements I_ArticleContent {
     if (a.getId() != articles.size()) {
       throw new IllegalArgumentException("The article id must match the index of the article.");
     }
+    String artDate = article.getDate();
+    long dateLong = niceDate.parse(artDate);
+    if (lastArticleDate < dateLong) {
+      lastArticleDate = dateLong;
+    }
     articles.add(a);
   }
   
   public void addArticleTree(I_ArticleTree tree) {
     ArticleTree treeCopy = new ArticleTree(tree);
     String date = tree.getDate();
-    long dateLong = NiceDate.parse(date);
+    
+    long dateLong = niceDate.parse(date);
     if (dateLong <= lastTreeDate) {
       throw new IllegalArgumentException("The tree date must be greater than the previous tree.");
     }
+    lastTreeDate = dateLong;
     articleTrees.add(treeCopy);
   }
   
@@ -75,7 +91,7 @@ public class ArticleContentMutant implements I_ArticleContent {
    */
   @Override
   public ArticleTree getTree(String date) {
-    long dateLong = NiceDate.parse(date);
+    long dateLong = niceDate.parse(date);
     long lastTreeDate = 0L;
     if (articleTrees.size() == 1) {
       return articleTrees.get(0);
@@ -83,7 +99,7 @@ public class ArticleContentMutant implements I_ArticleContent {
     ArticleTree lastTree = null;
     for (ArticleTree tree: articleTrees) {
       String treeDate = tree.getDate();
-      long treeDateLong = NiceDate.parse(treeDate);
+      long treeDateLong = niceDate.parse(treeDate);
       if (lastTreeDate == 0L) {
         //do nothing
       } else {
@@ -103,5 +119,13 @@ public class ArticleContentMutant implements I_ArticleContent {
 
   public List<I_ArticleTree> getArticleTrees() {
     return new ArrayList<I_ArticleTree>(articleTrees);
+  }
+  
+  public String getLastModifiedDate() {
+    long toRet = lastArticleDate;
+    if (toRet < lastTreeDate) {
+      toRet = lastTreeDate;
+    }
+    return niceDate.format(toRet);
   }
 }

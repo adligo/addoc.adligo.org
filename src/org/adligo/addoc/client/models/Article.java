@@ -1,5 +1,7 @@
 package org.adligo.addoc.client.models;
 
+import java.util.List;
+
 public class Article implements I_Article {
   private ArticleMutant mutant = null;
   
@@ -11,8 +13,8 @@ public class Article implements I_Article {
     return mutant.getId();
   }
 
-  public String getChanged() {
-    return mutant.getChanged();
+  public String getDate() {
+    return mutant.getDate();
   }
 
   public int getOriginalId() {
@@ -21,5 +23,17 @@ public class Article implements I_Article {
 
   public String getName() {
     return mutant.getName();
+  }
+
+  public String getContent() {
+    return mutant.getContent();
+  }
+
+  public boolean hasRevisions() {
+    return mutant.hasRevisions();
+  }
+
+  public List<I_Article> getRevisions() {
+    return mutant.getRevisions();
   }
 }

@@ -1,5 +1,6 @@
 package org.adligo.addoc.client.ui.handlers;
 
 public enum AddocEvent {
-  IndexClick, PreviousArticleTreeClick, NextArticleTreeClick, CurrentArticleTreeClick
+  IndexClick, PreviousArticleTreeClick, NextArticleTreeClick, CurrentArticleTreeClick,
+  ParentArticleClick, PreviousArticleClick, NextArticleClick
 }

@@ -1,25 +1,21 @@
 package org.adligo.addoc.client.presenter;
 
-import com.google.gwt.user.client.Window;
-
 import org.adligo.addoc.client.models.I_AddocContent;
+import org.adligo.addoc.client.models.I_ArticleContent;
 import org.adligo.addoc.client.models.I_SimplePanelContent;
 import org.adligo.addoc.client.ui.Dimension;
 import org.adligo.addoc.client.ui.I_AdColumnView;
-import org.adligo.addoc.client.ui.I_ArticleTreeView;
 import org.adligo.addoc.client.ui.I_ArticleView;
 import org.adligo.addoc.client.ui.I_MainView;
 import org.adligo.addoc.client.ui.I_MenuView;
 import org.adligo.addoc.client.ui.I_ViewFactory;
-import org.adligo.addoc.client.ui.handlers.AddocEvent;
-import org.adligo.addoc.client.ui.handlers.I_AddocHandler;
 
-public class MainPresenter implements I_AddocHandler {
+public class MainPresenter  {
   private I_MainView mainView_;
   private I_AdColumnView adColumnView_;
   private I_MenuView menuView_;
   private I_ArticleView articleView_;
-  private I_ArticleTreeView articleTreeView_;
+  
   
   public MainPresenter(I_ViewFactory factory, I_AddocContent config) {
     mainView_ = factory.createMainView();
@@ -28,16 +24,22 @@ public class MainPresenter implements I_AddocHandler {
     articleView_ = factory.createArticleView();
    
     setupMenu(factory, config);
+    setupAdColumn(config);
     mainView_.setAdColumnView(adColumnView_);
     mainView_.setArticleView(articleView_);
     mainView_.show();
     
-    articleTreeView_ = factory.createArticleTreeView();
+    ArticlePresenter ap = new ArticlePresenter();
+    ap.setContent(config.getArticleContent());
+    ap.setMenuView(menuView_);
+    ap.setArticleView(articleView_);
+    ap.setArticleTreeView(factory.createArticleTreeView());
+    ap.start();
   }
 
   public void setupMenu(I_ViewFactory factory, I_AddocContent config) {
     menuView_ = factory.createMenuView();
-    menuView_.setHandler(this);
+    
     I_SimplePanelContent titleImage = config.getTitleImage();
     if (titleImage == null) {
       throw new NullPointerException("I_AddocContent requires a header image");
@@ -56,10 +58,20 @@ public class MainPresenter implements I_AddocHandler {
     menuView_.setHeight(new Dimension(height));
     menuView_.setWidth(new Dimension(width));
     menuView_.setTitleImage(titleImage);
+    
+    I_ArticleContent content = config.getArticleContent();
+    menuView_.setLastModifiedDate(content.getLastModifiedDate());
     menuView_.render();
     mainView_.setMenuView(menuView_);
   }
 
+  public void setupAdColumn(I_AddocContent config) {
+    I_SimplePanelContent [] rightAds = config.getRightAds();
+    for (int i = 0; i < rightAds.length; i++) {
+      adColumnView_.addAd(rightAds[i]);
+    }
+  }
+  
   public I_MainView getMainView() {
     return mainView_;
   }
@@ -76,14 +88,4 @@ public class MainPresenter implements I_AddocHandler {
     return articleView_;
   }
 
-  @Override
-  public void onSimpleEvent(AddocEvent event) {
-    switch (event) {
-      case IndexClick:
-          articleTreeView_.show();
-        break;
-      default:
-        Window.alert("non handled event " + event);
-    }
-  }
 }

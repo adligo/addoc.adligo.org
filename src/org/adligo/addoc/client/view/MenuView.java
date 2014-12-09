@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import org.adligo.addoc.client.controller.AddocI18nConstants;
+import org.adligo.addoc.client.i18n.AddocI18nConstants;
 import org.adligo.addoc.client.models.I_SimplePanelContent;
 import org.adligo.addoc.client.ui.I_MenuView;
 import org.adligo.addoc.client.ui.handlers.AddocEvent;
@@ -83,7 +83,7 @@ public class MenuView extends AbstractSizedView implements I_MenuView {
     bottomHorizontalPanel.setCellVerticalAlignment(changedLabel, HasVerticalAlignment.ALIGN_BOTTOM);
     bottomHorizontalPanel.setCellHorizontalAlignment(changedLabel, HasHorizontalAlignment.ALIGN_RIGHT);
     
-    dateLabel = new Label(CONSTANTS.dateLabel_text());
+    dateLabel = new Label("12/31/2999");
     dateLabel.setWordWrap(false);
     bottomHorizontalPanel.add(dateLabel);
     bottomHorizontalPanel.setCellVerticalAlignment(dateLabel, HasVerticalAlignment.ALIGN_BOTTOM);
