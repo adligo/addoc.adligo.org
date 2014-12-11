@@ -2,6 +2,11 @@ package org.adligo.addoc.client.presenter.content;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 
 import org.adligo.addoc.client.i18n.AddocI18nConstants;
 import org.adligo.addoc.client.i18n.GWTCreateWrapper;
@@ -10,8 +15,10 @@ import org.adligo.addoc.client.i18n.LazyArticleTrees;
 import org.adligo.addoc.client.i18n.OneHundredArticleBriefs;
 import org.adligo.addoc.client.i18n.TenArticleTrees;
 import org.adligo.addoc.client.models.ArticleBriefBuilder;
+import org.adligo.addoc.client.models.ArticleBuilder;
 import org.adligo.addoc.client.models.ArticleTreesBuilder;
 import org.adligo.addoc.client.models.I_AddocContent;
+import org.adligo.addoc.client.models.I_Article;
 import org.adligo.addoc.client.models.I_ArticleBrief;
 import org.adligo.addoc.client.models.I_ArticleTree;
 import org.adligo.addoc.client.models.IdRange;
@@ -19,11 +26,9 @@ import org.adligo.addoc.client.models.IdRangeBTreeLookup;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -39,7 +44,7 @@ import java.util.TreeSet;
  * @author scott
  *
  */
-public class ContentManager implements I_ContentManager {
+public class ContentManager implements I_ContentManager, RequestCallback {
   private static final AddocI18nConstants CONSTANTS = GWT.create(AddocI18nConstants.class);
   
   private String baseArticleUrl_ = CONSTANTS.getArticleRelativeUrl();
@@ -52,8 +57,8 @@ public class ContentManager implements I_ContentManager {
   private Map<Integer, Boolean> lazyArticleBriefsRequestsSent_ = new HashMap<Integer,Boolean>();
   private Map<Integer, I_ArticleTree> articleTrees_ = new HashMap<Integer,I_ArticleTree>();
   private Map<Integer, I_ArticleBrief> articleBriefs_ = new HashMap<Integer,I_ArticleBrief>();
-  private Set<Integer> treeRequests_ = new HashSet<Integer>();
-  private Set<Integer> articleRequests_ = new HashSet<Integer>();
+  private I_ArticleRequestor articleRequest_ = null;
+  private I_ArticleBrief articleRequestBrief_ = null;
   
   @SuppressWarnings({"rawtypes", "unchecked", "boxing"})
   public void setupArticleTrees(List<LazyArticleTrees> lazyTrees, int latestTree) {
@@ -86,11 +91,6 @@ public class ContentManager implements I_ContentManager {
       loadedMap.put(range, null);
     }
     lazyArticleBriefs_ = new IdRangeBTreeLookup(map);
-  }
-
-  @Override
-  public String getLastModifiedDate() {
-    return CONSTANTS.getLastModified();
   }
 
 
@@ -179,9 +179,22 @@ public class ContentManager implements I_ContentManager {
   
 
   @Override
-  public void requestArticle(int articleId,I_ArticleRequestor requestor) {
-    // TODO Auto-generated method stub
-    
+  public void requestArticle(I_ArticleBrief articleBrief, I_ArticleRequestor requestor) {
+    if (articleRequestBrief_ != null) {
+      requestor.onFailure(new IllegalStateException("Pending request for articles should not overlap."));
+      return;
+    }
+    articleRequestBrief_ = articleBrief;
+    articleRequest_ = requestor;
+    int articleId = articleBrief.getId();
+    RequestBuilder rb = new RequestBuilder(RequestBuilder.GET,
+        baseArticleUrl_ + "/a" + articleId + ".txt");
+    rb.setCallback(this);
+    try {
+      rb.send();
+    } catch (RequestException e) {
+      requestor.onFailure(e);
+    }
   }
 
   public void setAddocContent(I_AddocContent addocContent) {
@@ -204,5 +217,22 @@ public class ContentManager implements I_ContentManager {
         requestor.onSuccess(articleBriefs);
       }
     });
+  }
+
+  @Override
+  public void onResponseReceived(Request request, Response response) {
+    
+    String text = response.getText();
+    ArticleBuilder ab = new ArticleBuilder();
+    I_Article article = ab.build(articleRequestBrief_, text);
+    articleRequestBrief_ = null;
+    articleRequest_.onSuccess(article);
+    
+  }
+
+  @Override
+  public void onError(Request request, Throwable exception) {
+    articleRequestBrief_ = null;
+    articleRequest_.onFailure(exception);
   }
 }

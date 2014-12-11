@@ -11,6 +11,10 @@ public class ArticleMutant extends ArticleBriefMutant implements I_Article {
   
   public ArticleMutant() {}
   
+  public ArticleMutant(I_ArticleBrief a) {
+    super(a);
+  }
+  
   public ArticleMutant(I_Article a) {
     super(a);
     setDate(a.getDate());

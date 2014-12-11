@@ -44,9 +44,15 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   private Set<Integer> requestedArticles_ = new HashSet<Integer>();
   
   private I_ArticleTree currentTree_;
+  private I_ArticleBrief currentArticleBrief_;
+  private I_ArticleBrief currentArticlePreviousBrief_;
   private I_Article currentArticle_;
+  private I_Article currentArticlePreviousArticle_;
+  
   private I_DialogView dialogView_;
   private List<I_AdView> adViews_ = new ArrayList<I_AdView>();
+  private String browserWindowUrl_;
+  private String [] lastTreePath_;
   
   public I_MenuView getMenuView() {
     return menuView_;
@@ -76,6 +82,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   }
   
   public void start(String browserUrl) {
+    browserWindowUrl_ = browserUrl;
     I_AddocContent addocContent = contentManager_.getAddocContent();
     cache_ = addocContent.getContentCache();
     
@@ -205,21 +212,66 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   
   @Override
   public void onSuccess(I_Article article) {
-    // TODO Auto-generated method stub
-    
+    if (currentArticle_ == null) {
+      currentArticle_ = article;
+      int previousId = article.getPreviousId();
+      if (previousId >= 0) {
+        loadCurrentArticlePrevious(previousId);
+      } else {
+        displayArticle();
+      }
+    } else {
+      currentArticlePreviousArticle_ = article;
+      displayArticle();
+    }
   }
   
   @SuppressWarnings("boxing")
   @Override
   public void onSuccess(List<I_ArticleBrief> briefs) {
     int treeId = currentTree_.getId();
+    List<Integer> previousVersions = new ArrayList<Integer>();
+    
     for (I_ArticleBrief articleBrief: briefs) {
       requestedArticleBriefs_.remove(articleBrief.getId());
       cache_.addArticleBreif(treeId, articleBrief);
+      int previousId = articleBrief.getPreviousId();
+      if (previousId >= 0) {
+        previousVersions.add(previousId);
+      }
     }
-    
+    cache_.removeCachedArticleIds(previousVersions);
+    if (previousVersions.size() >= 1) {
+      loadArticleBriefs(previousVersions);
+    }
+    List<Integer> topIds = currentTree_.getTop();
+    Integer topId = topIds.get(0);
+    if (currentArticleBrief_ == null) {
+      loadCurrentArticle(topId);
+      lastTreePath_ = new String[] {currentArticleBrief_.getName()};
+    } else if (currentArticleBrief_.getId() != topId) {
+      loadCurrentArticle(topId);
+    } 
     if (requestedArticleBriefs_.size() == 0) {
       displayTree();
+    }
+  }
+  
+  @SuppressWarnings("boxing")
+  public void loadCurrentArticle(Integer topId) {
+    currentArticle_ = null;
+    currentArticleBrief_ = cache_.getArticleBrief(topId);
+    if (currentArticleBrief_ != null) {
+      contentManager_.requestArticle(currentArticleBrief_, this);
+    }
+  }
+  
+  @SuppressWarnings("boxing")
+  public void loadCurrentArticlePrevious(Integer topId) {
+    currentArticlePreviousArticle_ = null;
+    currentArticlePreviousBrief_ = cache_.getArticleBrief(topId);
+    if (currentArticlePreviousBrief_ != null) {
+      contentManager_.requestArticle(currentArticlePreviousBrief_, this);
     }
   }
   
@@ -228,6 +280,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   public void onSuccess(I_ArticleTree tree) {
     requestedTreeId_ = null;
     currentTree_ = tree;
+    menuView_.setLastModifiedDate(currentTree_.getDate());
     List<Integer> top = currentTree_.getTop();
     
     loadArticleBriefs(top);
@@ -270,6 +323,34 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
     }
   }
   
+  private void displayArticle() {
+    articleView_.setTitle(currentArticle_.getName());
+    articleView_.setLastModified(currentArticle_.getDate());
+    if (currentArticlePreviousArticle_ != null) {
+      articleView_.setPreviousEnabled(true);
+      articleView_.setPreviousVersion(currentArticlePreviousArticle_.getDate());
+    }
+    articleView_.setTextHtml(currentArticle_.getContent());
+    String baseUrl = browserWindowUrl_;
+    int pound = browserWindowUrl_.indexOf("#");
+    if (pound != -1) {
+      baseUrl = browserWindowUrl_.substring(0, pound);
+    }
+    articleView_.setTopicUrl(baseUrl + "#topic/"  + getTreePathAsUrl());
+    articleView_.setArticleUrl(baseUrl + "#article/"  + currentArticle_.getId());
+  }
+  
+  public String getTreePathAsUrl() {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < lastTreePath_.length; i++) {
+      if (i != 0) {
+        sb.append("/");
+      } else {
+        sb.append(lastTreePath_[i]);
+      }
+    }
+    return sb.toString();
+  }
   @SuppressWarnings("boxing")
   private void displayTree() {
     articleTreeView_.clearNodes();
@@ -319,4 +400,5 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
       return new Integer(idString);
     }
   }
+  
 }

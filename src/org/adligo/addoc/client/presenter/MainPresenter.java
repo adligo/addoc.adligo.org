@@ -20,9 +20,9 @@ public class MainPresenter  {
   public MainPresenter(I_ViewFactory factory, I_ContentManager cm) {
     mainView_ = factory.createMainView();
    
-    articleView_ = factory.createArticleView();
+    setupArticleView(factory);
    
-    setupMenu(factory, cm.getAddocContent(), cm.getLastModifiedDate());
+    setupMenu(factory, cm.getAddocContent());
     setupAdColumns(factory, cm.getAddocContent());
     
     mainView_.setArticleView(articleView_);
@@ -37,7 +37,20 @@ public class MainPresenter  {
     ap.start(mainView_.getBrowserUrl());
   }
 
-  public void setupMenu(I_ViewFactory factory, I_AddocContent config, String lastModifiedDate) {
+  public void setupArticleView(I_ViewFactory factory) {
+    articleView_ = factory.createArticleView();
+    articleView_.setTitle("");
+    articleView_.setLastModified("");
+    articleView_.setUpdated("");
+    articleView_.setTextHtml("");
+    articleView_.setArticleUrl("");
+    articleView_.setTopicUrl("");
+    articleView_.setNextEnabled(false);
+    articleView_.setPreviousEnabled(false);
+    articleView_.setUpEnabled(false);
+  }
+
+  public void setupMenu(I_ViewFactory factory, I_AddocContent config) {
     menuView_ = factory.createMenuView();
     
     I_SimplePanelContent titleImage = config.getTitleImage();
@@ -59,7 +72,7 @@ public class MainPresenter  {
     menuView_.setWidth(new Dimension(width));
     menuView_.setTitleImage(titleImage);
     
-    menuView_.setLastModifiedDate(lastModifiedDate);
+    menuView_.setLastModifiedDate("");
     menuView_.render();
     mainView_.setMenuView(menuView_);
   }

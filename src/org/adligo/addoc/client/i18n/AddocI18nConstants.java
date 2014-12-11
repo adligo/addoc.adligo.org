@@ -6,7 +6,6 @@ public interface AddocI18nConstants extends Constants {
   
   public String getLastModified();
   public String getIndex();
-  public String getDateTimeFormat();
   public String getNavigation();
   public String getTopic();
   public String getArticle();
@@ -24,8 +23,11 @@ public interface AddocI18nConstants extends Constants {
   public String getObtainArticleBriefErrorSize();
   public String getObtainArticleError();
   public String getObtainArticleErrorSize();
+  public String getPreviousVersion();
   
   public String getClose();
   public String getOk();
   public String getCancel();
+  String previousVersionPanel__width();
+  String horizontalPanel_width();
 }

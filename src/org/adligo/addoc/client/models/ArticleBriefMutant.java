@@ -61,6 +61,9 @@ public class ArticleBriefMutant implements I_ArticleBrief {
     if (name == null) {
       throw new IllegalArgumentException("Article Names may not be null.");
     }
+    if (name.indexOf("#") != -1) {
+      throw new IllegalArgumentException("Article Names may not contain a &.");
+    }
     if (name.indexOf("&") != -1) {
       throw new IllegalArgumentException("Article Names may not contain a &.");
     }
