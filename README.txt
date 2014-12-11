@@ -10,4 +10,5 @@ why not get paid for it too while they read and surf!
 
 This should remain a stand alone project with no dependencies
 other than GWT.  GWT is great for i18n so you can add languages
-with ease.
+with ease. See http://adligo.org/org_docs/index.html#topic/Systems/Addoc 
+for more information on how to use this project.

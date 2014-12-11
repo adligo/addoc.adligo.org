@@ -5,6 +5,7 @@ import java.util.List;
 public class ArticleTreeMutant implements I_ArticleTree {
   private String date;
   private I_NumberedTree numberedTree;
+  private int id;
   
   public ArticleTreeMutant() {}
   
@@ -46,6 +47,14 @@ public class ArticleTreeMutant implements I_ArticleTree {
 
   public void setNumberedTree(I_NumberedTree numberedTree) {
     this.numberedTree = numberedTree;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 
 }

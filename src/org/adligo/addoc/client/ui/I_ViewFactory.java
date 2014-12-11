@@ -7,4 +7,5 @@ public interface I_ViewFactory {
   public I_AdColumnView createAdColumnView();
   public I_ArticleView createArticleView();
   public I_ArticleTreeView createArticleTreeView();
+  public I_DialogView createDialogView();
 }

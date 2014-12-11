@@ -1,10 +1,13 @@
 package org.adligo.addoc.client.view;
 
-import org.adligo.addoc.client.models.I_SimplePanelContent;
-import org.adligo.addoc.client.ui.I_AdColumnView;
-
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import org.adligo.addoc.client.models.I_SimplePanelContent;
+import org.adligo.addoc.client.ui.Dimension;
+import org.adligo.addoc.client.ui.I_AdColumnView;
+import org.adligo.addoc.client.ui.I_AdView;
+import org.adligo.addoc.client.ui.I_Dimension;
 
 public class AdColumnView extends AbstractSizedView implements I_AdColumnView {
   private int adds = 0;
@@ -15,11 +18,30 @@ public class AdColumnView extends AbstractSizedView implements I_AdColumnView {
     initWidget(verticalPanel_);
   }
 
-  public void addAd(I_SimplePanelContent adContent) {
-    AdFrame adFrame = new AdFrame(adContent.getUrl());
+  public I_AdView addAd(I_SimplePanelContent adContent) {
+    AdView adView = new AdView(adContent.getUrl());
     
-    adFrame.setHeight("" + adContent.getHeight() + "px");
-    adFrame.setWidth("" + adContent.getWidth() + "px");
+    I_Dimension height = super.getHeightDimension();
+    I_Dimension width = super.getWidthDimension();
+    
+    int inHeight = adContent.getHeight();
+    int inWidth =  adContent.getWidth();
+    
+    if (height == null) {
+      height = new Dimension(inHeight);
+    } else {
+      height = new Dimension(inHeight + height.getDim());
+    }
+    super.setHeight(height);
+    if (width == null) {
+      width = new Dimension(inWidth);
+    } else if (inWidth > width.getDim()){
+      width = new Dimension(inWidth);
+    }
+    super.setWidth(width);
+    verticalPanel_.setWidth(width.getDimension());
+    adView.setHeight("" + adContent.getHeight() + "px");
+    adView.setWidth("" + adContent.getWidth() + "px");
     
     if (adds != 0) {
       SimplePanel sp = new SimplePanel();
@@ -27,6 +49,7 @@ public class AdColumnView extends AbstractSizedView implements I_AdColumnView {
       verticalPanel_.add(sp);
     }
     adds++;
-    verticalPanel_.add(adFrame);
+    verticalPanel_.add(adView);
+    return adView;
   }
 }

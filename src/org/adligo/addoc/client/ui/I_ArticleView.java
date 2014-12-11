@@ -4,7 +4,7 @@ import org.adligo.addoc.client.models.I_Article;
 
 import java.util.List;
 
-public interface I_ArticleView {
+public interface I_ArticleView extends I_SizedComposite {
   public void setTextHtml(String tHtml);
   /**
    * The url for the most current

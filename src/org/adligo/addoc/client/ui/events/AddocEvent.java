@@ -1,4 +1,4 @@
-package org.adligo.addoc.client.ui.handlers;
+package org.adligo.addoc.client.ui.events;
 
 public enum AddocEvent {
   IndexClick, PreviousArticleTreeClick, NextArticleTreeClick, CurrentArticleTreeClick,

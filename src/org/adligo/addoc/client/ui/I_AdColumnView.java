@@ -2,6 +2,6 @@ package org.adligo.addoc.client.ui;
 
 import org.adligo.addoc.client.models.I_SimplePanelContent;
 
-public interface I_AdColumnView {
-  public void addAd(I_SimplePanelContent adContent);
+public interface I_AdColumnView extends I_SizedComposite {
+  public I_AdView addAd(I_SimplePanelContent adContent);
 }

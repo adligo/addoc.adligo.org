@@ -2,16 +2,17 @@
 	background-color: wheat;
 }
 
-.menuView {
+.menuBar {
 	background-color: Silver;
 	font-size: 18px;
 	font-family: "Times New Roman", Times, serif;
-	
+	height: 30px;
 	
 }
 
-.menuViewIndex {
+.menuBarIndex {
 	font-size: 24px;
+	font-family: "Times New Roman", Times, serif;
 }
 
 .adFrame {
@@ -19,4 +20,25 @@ overflow-x: hidden;
 overflow-y: hidden;
 -ms-overflow-x: hidden;
 -ms-overflow-y: hidden;
+}
+.articleTitle {
+	font-size: 24px;
+	font-family: "Times New Roman", Times, serif;
+}
+.article {
+	font-size: 12px;
+	font-family: "Times New Roman", Times, serif;
+	
+}
+.articleSection {
+	font-size: 18px;
+	font-family: "Times New Roman", Times, serif;
+}
+.articleView {
+  background-color: wheat;
+}
+.dialogView {
+  font-size: 18px;
+  font-family: "Times New Roman", Times, serif;
+  background-color: wheat;
 }

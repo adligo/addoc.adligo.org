@@ -1,0 +1,6 @@
+height=500
+This is the original a four <br/>
+which has a span tag to check out how style sheets interact with <br/>
+<span class="nameClassSpan"> span tag part </span>
+utf8 i18n encoded text delivered through the<br/>
+gwt i18n mechanism.

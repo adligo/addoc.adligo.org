@@ -2,7 +2,6 @@ package org.adligo.addoc.client.view;
 
 import com.google.gwt.user.client.ui.Composite;
 
-import org.adligo.addoc.client.ui.Dimension;
 import org.adligo.addoc.client.ui.I_Dimension;
 import org.adligo.addoc.client.ui.I_SizedComposite;
 
@@ -14,16 +13,17 @@ public abstract class AbstractSizedView extends Composite implements I_SizedComp
     return height_;
   }
   
-  public void setHeight(Dimension height) {
-    this.height_ = height;
-  }
-  
   public I_Dimension getWidthDimension() {
     return width_;
   }
   
-  public void setWidth(Dimension width) {
+  public void setWidth(I_Dimension width) {
     this.width_ = width;
+    if (width_.isPct()) {
+      this.setWidth("" + width_.getDim() + "%");
+    } else {
+      this.setWidth("" + width_.getDim() + "px");
+    }
   }
   
   public String getHeight() {
@@ -37,10 +37,11 @@ public abstract class AbstractSizedView extends Composite implements I_SizedComp
   @Override
   public void setHeight(I_Dimension height) {
     height_ = height;
+    if (height_.isPct()) {
+      this.setHeight("" + height_.getDim() + "%");
+    } else {
+      this.setHeight("" + height_.getDim() + "px");
+    }
   }
   
-  @Override
-  public void setWidth(I_Dimension width) {
-    width_ = width;
-  }
 }

@@ -16,12 +16,13 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 import org.adligo.addoc.client.i18n.AddocI18nConstants;
 import org.adligo.addoc.client.ui.I_ArticleTreeView;
-import org.adligo.addoc.client.ui.handlers.I_AddocHandler;
+import org.adligo.addoc.client.ui.events.I_AddocHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArticleTreeView extends Composite implements I_ArticleTreeView {
+  private static final AddocI18nConstants CONSTANTS = GWT.create(AddocI18nConstants.class);
   private DialogBox dialog;
   private TreeNavigationView navView_;
   private Tree tree_;
@@ -31,7 +32,12 @@ public class ArticleTreeView extends Composite implements I_ArticleTreeView {
     
     AbsolutePanel absolutePanel = new AbsolutePanel();
     initWidget(absolutePanel);
-    absolutePanel.setSize("450px", "450px");
+    absolutePanel.setSize("480px", "480px");
+    
+    Image backroundPngImage = new Image("images/Backround.png");
+    backroundPngImage.setStyleName("articleView");
+    backroundPngImage.setSize("100%", "100%");
+    absolutePanel.add(backroundPngImage,0,0);
     
     tree_ = new Tree();
     tree_.setTitle(((AddocI18nConstants) GWT.create(AddocI18nConstants.class)).getIndex());
@@ -42,7 +48,7 @@ public class ArticleTreeView extends Composite implements I_ArticleTreeView {
         onTreeSelection(event.getSelectedItem());
       }
     });
-    absolutePanel.add(tree_);
+    absolutePanel.add(tree_, 0, 30);
     tree_.setSize("450px", "450px");
     
     SimplePanel simplePanel = new SimplePanel();
@@ -58,8 +64,12 @@ public class ArticleTreeView extends Composite implements I_ArticleTreeView {
         hide();
       }
     });
-    absolutePanel.add(image, 434, 4);
+    absolutePanel.add(image, 454, 4);
     image.setSize("16px", "16px");
+    
+    Label lblNewLabel = new Label(CONSTANTS.getIndex());
+    lblNewLabel.setStyleName("menuBarIndex");
+    absolutePanel.add(lblNewLabel, 10, 0);
     
     
   }
@@ -170,5 +180,4 @@ public class ArticleTreeView extends Composite implements I_ArticleTreeView {
   public void setDateModified(String date) {
     navView_.setDateModified(date);
   }
-  
 }

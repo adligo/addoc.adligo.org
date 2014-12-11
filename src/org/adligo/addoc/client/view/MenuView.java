@@ -15,9 +15,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import org.adligo.addoc.client.i18n.AddocI18nConstants;
 import org.adligo.addoc.client.models.I_SimplePanelContent;
+import org.adligo.addoc.client.ui.I_AdView;
 import org.adligo.addoc.client.ui.I_MenuView;
-import org.adligo.addoc.client.ui.handlers.AddocEvent;
-import org.adligo.addoc.client.ui.handlers.I_AddocHandler;
+import org.adligo.addoc.client.ui.events.AddocEvent;
+import org.adligo.addoc.client.ui.events.I_AddocHandler;
 
 public class MenuView extends AbstractSizedView implements I_MenuView {
   private static final AddocI18nConstants CONSTANTS = GWT.create(AddocI18nConstants.class);
@@ -58,7 +59,7 @@ public class MenuView extends AbstractSizedView implements I_MenuView {
     topHorizontalPanel.add(adPanel);
     
     bottomHorizontalPanel = new HorizontalPanel();
-    bottomHorizontalPanel.setStyleName("menuView");
+    bottomHorizontalPanel.setStyleName("menuBar");
     verticalPanel.add(bottomHorizontalPanel);
     bottomHorizontalPanel.setWidth("100%");
     
@@ -69,7 +70,7 @@ public class MenuView extends AbstractSizedView implements I_MenuView {
       }
     });
     indexAnchor.setWordWrap(false);
-    indexAnchor.setStyleName("menuViewIndex");
+    indexAnchor.setStyleName("menuBarIndex");
     bottomHorizontalPanel.add(indexAnchor);
     bottomHorizontalPanel.setCellVerticalAlignment(indexAnchor, HasVerticalAlignment.ALIGN_BOTTOM);
     
@@ -103,13 +104,14 @@ public class MenuView extends AbstractSizedView implements I_MenuView {
     titleImage.setUrl(content.getUrl());
   }
   
-  public void setAd(I_SimplePanelContent content) {
+  public I_AdView setAd(I_SimplePanelContent content) {
     adContent = content;
-    AdFrame adFrame = new AdFrame(content.getUrl());
+    AdView adView = new AdView(content.getUrl());
    
-    adFrame.setWidth("" + content.getWidth() + "px");
-    adFrame.setHeight("" + content.getHeight()  + "px");
-    adPanel.setWidget(adFrame);
+    adView.setWidth("" + content.getWidth() + "px");
+    adView.setHeight("" + content.getHeight()  + "px");
+    adPanel.setWidget(adView);
+    return adView;
   }
 
   public void setLastModifiedDate(String date) {

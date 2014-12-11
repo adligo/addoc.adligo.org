@@ -1,6 +1,6 @@
 package org.adligo.addoc.client.ui;
 
-import org.adligo.addoc.client.ui.handlers.I_AddocHandler;
+import org.adligo.addoc.client.ui.events.I_AddocHandler;
 
 public interface I_ArticleTreeView {
   public void clearNodes();

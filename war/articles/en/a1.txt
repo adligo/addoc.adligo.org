@@ -1,0 +1,4 @@
+height=500
+This is the original a one, with a image;
+<image src="images/bcornerBL.png" /> 
+Note the wrinkled paper.

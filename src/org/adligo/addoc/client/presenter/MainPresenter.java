@@ -1,8 +1,8 @@
 package org.adligo.addoc.client.presenter;
 
 import org.adligo.addoc.client.models.I_AddocContent;
-import org.adligo.addoc.client.models.I_ArticleContent;
 import org.adligo.addoc.client.models.I_SimplePanelContent;
+import org.adligo.addoc.client.presenter.content.I_ContentManager;
 import org.adligo.addoc.client.ui.Dimension;
 import org.adligo.addoc.client.ui.I_AdColumnView;
 import org.adligo.addoc.client.ui.I_ArticleView;
@@ -12,32 +12,32 @@ import org.adligo.addoc.client.ui.I_ViewFactory;
 
 public class MainPresenter  {
   private I_MainView mainView_;
-  private I_AdColumnView adColumnView_;
+  private I_AdColumnView rightAdColumnView_;
+  private I_AdColumnView leftAdColumnView_;
   private I_MenuView menuView_;
   private I_ArticleView articleView_;
   
-  
-  public MainPresenter(I_ViewFactory factory, I_AddocContent config) {
+  public MainPresenter(I_ViewFactory factory, I_ContentManager cm) {
     mainView_ = factory.createMainView();
-    adColumnView_ = factory.createAdColumnView();
    
     articleView_ = factory.createArticleView();
    
-    setupMenu(factory, config);
-    setupAdColumn(config);
-    mainView_.setAdColumnView(adColumnView_);
+    setupMenu(factory, cm.getAddocContent(), cm.getLastModifiedDate());
+    setupAdColumns(factory, cm.getAddocContent());
+    
     mainView_.setArticleView(articleView_);
     mainView_.show();
     
     ArticlePresenter ap = new ArticlePresenter();
-    ap.setContent(config.getArticleContent());
+    ap.setContentManager(cm);
     ap.setMenuView(menuView_);
     ap.setArticleView(articleView_);
+    ap.setDialogView(factory.createDialogView());
     ap.setArticleTreeView(factory.createArticleTreeView());
-    ap.start();
+    ap.start(mainView_.getBrowserUrl());
   }
 
-  public void setupMenu(I_ViewFactory factory, I_AddocContent config) {
+  public void setupMenu(I_ViewFactory factory, I_AddocContent config, String lastModifiedDate) {
     menuView_ = factory.createMenuView();
     
     I_SimplePanelContent titleImage = config.getTitleImage();
@@ -59,16 +59,27 @@ public class MainPresenter  {
     menuView_.setWidth(new Dimension(width));
     menuView_.setTitleImage(titleImage);
     
-    I_ArticleContent content = config.getArticleContent();
-    menuView_.setLastModifiedDate(content.getLastModifiedDate());
+    menuView_.setLastModifiedDate(lastModifiedDate);
     menuView_.render();
     mainView_.setMenuView(menuView_);
   }
 
-  public void setupAdColumn(I_AddocContent config) {
+  public void setupAdColumns(I_ViewFactory factory, I_AddocContent config) {
     I_SimplePanelContent [] rightAds = config.getRightAds();
-    for (int i = 0; i < rightAds.length; i++) {
-      adColumnView_.addAd(rightAds[i]);
+    if (rightAds.length >= 1) {
+      rightAdColumnView_ = factory.createAdColumnView();
+      for (int i = 0; i < rightAds.length; i++) {
+        rightAdColumnView_.addAd(rightAds[i]);
+      }
+      mainView_.setRightAdColumnView(rightAdColumnView_);
+    }
+    I_SimplePanelContent [] leftAds = config.getLeftAds();
+    if (leftAds.length >= 1) {
+      leftAdColumnView_ = factory.createAdColumnView();
+      for (int i = 0; i < leftAds.length; i++) {
+        leftAdColumnView_.addAd(leftAds[i]);
+      }
+      mainView_.setLeftAdColumnView(leftAdColumnView_);
     }
   }
   
@@ -77,7 +88,7 @@ public class MainPresenter  {
   }
 
   public I_AdColumnView getAdColumnView() {
-    return adColumnView_;
+    return rightAdColumnView_;
   }
 
   public I_MenuView getMenuView() {

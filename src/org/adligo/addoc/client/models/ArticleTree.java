@@ -25,6 +25,8 @@ public class ArticleTree implements I_ArticleTree {
     return mutant.getNumberedTree();
   }
   
-  
+  public int getId() {
+    return mutant.getId();
+  }
 
 }

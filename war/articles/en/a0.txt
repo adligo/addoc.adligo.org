@@ -1,0 +1,4 @@
+height=500
+This is the original a zero, 
+please note it should be a simple multiple line a 
+generated from gwt i18n property file.
