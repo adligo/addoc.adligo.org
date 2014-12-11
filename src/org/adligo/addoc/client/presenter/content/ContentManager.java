@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 
 import org.adligo.addoc.client.i18n.AddocI18nConstants;
+import org.adligo.addoc.client.i18n.GWTCreateWrapper;
 import org.adligo.addoc.client.i18n.LazyArticleBriefs;
 import org.adligo.addoc.client.i18n.LazyArticleTrees;
 import org.adligo.addoc.client.i18n.OneHundredArticleBriefs;
@@ -45,8 +46,8 @@ public class ContentManager implements I_ContentManager {
   private int latestTree_;
   private int lastArticle_;
   private I_AddocContent addocContent_;
-  private IdRangeBTreeLookup<Class<TenArticleTrees>> lazyArticleTrees_;
-  private IdRangeBTreeLookup<Class<OneHundredArticleBriefs>> lazyArticleBriefs_;
+  private IdRangeBTreeLookup<GWTCreateWrapper<TenArticleTrees>> lazyArticleTrees_;
+  private IdRangeBTreeLookup<GWTCreateWrapper<OneHundredArticleBriefs>> lazyArticleBriefs_;
   private IdRangeBTreeLookup<Boolean> lazyArticleTreesRequestsSent_;
   private Map<Integer, Boolean> lazyArticleBriefsRequestsSent_ = new HashMap<Integer,Boolean>();
   private Map<Integer, I_ArticleTree> articleTrees_ = new HashMap<Integer,I_ArticleTree>();
@@ -57,12 +58,12 @@ public class ContentManager implements I_ContentManager {
   @SuppressWarnings({"rawtypes", "unchecked", "boxing"})
   public void setupArticleTrees(List<LazyArticleTrees> lazyTrees, int latestTree) {
     latestTree_ = latestTree;
-    TreeMap<IdRange, Class<LazyArticleTrees>> map = new TreeMap<IdRange, Class<LazyArticleTrees>>();
+    TreeMap<IdRange, GWTCreateWrapper<TenArticleTrees>> map = new TreeMap<IdRange, GWTCreateWrapper<TenArticleTrees>>();
     TreeMap<IdRange, Boolean> loadMap = new TreeMap<IdRange, Boolean>();
     TreeMap<IdRange, TenArticleTrees> loadedMap = new TreeMap<IdRange, TenArticleTrees>();
     for (LazyArticleTrees lt: lazyTrees) {
       IdRange range = lt.getIds();
-      Class<LazyArticleTrees> trees = (Class<LazyArticleTrees>) lt.getTenArticleTrees();
+      GWTCreateWrapper<TenArticleTrees> trees = (GWTCreateWrapper<TenArticleTrees>) lt.getTenArticleTrees();
       map.put(range, trees);
       loadMap.put(range, false);
       loadedMap.put(range, null);
@@ -74,12 +75,12 @@ public class ContentManager implements I_ContentManager {
   @SuppressWarnings({"rawtypes", "unchecked", "boxing"})
   public void setupArticleBriefs(List<LazyArticleBriefs> lazyArticleBriefs, int lastArticle) {
     lastArticle_ = lastArticle;
-    TreeMap<IdRange, Class<OneHundredArticleBriefs>> map = new TreeMap<IdRange, Class<OneHundredArticleBriefs>>();
+    TreeMap<IdRange, GWTCreateWrapper<OneHundredArticleBriefs>> map = new TreeMap<IdRange, GWTCreateWrapper<OneHundredArticleBriefs>>();
     TreeMap<IdRange, Boolean> loadMap = new TreeMap<IdRange, Boolean>();
     TreeMap<IdRange, OneHundredArticleBriefs> loadedMap = new TreeMap<IdRange, OneHundredArticleBriefs>();
     for (LazyArticleBriefs briefs: lazyArticleBriefs) {
       IdRange range = briefs.getIds();
-      Class<OneHundredArticleBriefs> hundredBriefs = (Class<OneHundredArticleBriefs>) briefs.getOneHundredArticleBriefs();
+      GWTCreateWrapper<OneHundredArticleBriefs> hundredBriefs = (GWTCreateWrapper<OneHundredArticleBriefs>) briefs.getOneHundredArticleBriefs();
       map.put(range, hundredBriefs);
       loadMap.put(range, false);
       loadedMap.put(range, null);
@@ -113,7 +114,7 @@ public class ContentManager implements I_ContentManager {
       return;
     }
     final IdRange ids = lazyArticleTrees_.getIds(treeId);
-    final Class<TenArticleTrees> treesClass = lazyArticleTrees_.get(treeId);
+    final GWTCreateWrapper<TenArticleTrees> treesClass = lazyArticleTrees_.get(treeId);
     
     GWT.runAsync(new RunAsyncCallback() {
       public void onFailure(Throwable caught) {
@@ -121,7 +122,7 @@ public class ContentManager implements I_ContentManager {
       }
 
       public void onSuccess() {
-        TenArticleTrees trees = GWT.create(treesClass);
+        TenArticleTrees trees = treesClass.create();
         int end = ids.getEnd();
         if (end > latestTree_) {
           end = latestTree_;
@@ -155,7 +156,7 @@ public class ContentManager implements I_ContentManager {
       if (lastStart <= id && id <= lastEnd) {
         if (lastStart == 0) {
           IdRange range = lazyArticleBriefs_.getIds(0);
-          Class<OneHundredArticleBriefs> articleBriefs = lazyArticleBriefs_.get(0);
+          GWTCreateWrapper<OneHundredArticleBriefs> articleBriefs = lazyArticleBriefs_.get(0);
           loadArticleBriefs(articleBriefs, range, requestor);
           lastStart = 100;
           lastEnd = 199;
@@ -169,7 +170,7 @@ public class ContentManager implements I_ContentManager {
         lastEnd = start + 99;
         
         IdRange range = lazyArticleBriefs_.getIds(lastStart);
-        Class<OneHundredArticleBriefs> articleBriefs = lazyArticleBriefs_.get(lastStart);
+        GWTCreateWrapper<OneHundredArticleBriefs> articleBriefs = lazyArticleBriefs_.get(lastStart);
         loadArticleBriefs(articleBriefs, range, requestor);
       }
     }
@@ -187,7 +188,7 @@ public class ContentManager implements I_ContentManager {
     this.addocContent_ = addocContent;
   }
   
-  private void loadArticleBriefs(final Class<OneHundredArticleBriefs> bries,final IdRange range, final I_ArticleBriefRequestor requestor) {
+  private void loadArticleBriefs(final GWTCreateWrapper<OneHundredArticleBriefs> briefsCreator,final IdRange range, final I_ArticleBriefRequestor requestor) {
     GWT.runAsync(new RunAsyncCallback() {
       public void onFailure(Throwable caught) {
         requestor.onFailure(caught);
@@ -198,8 +199,7 @@ public class ContentManager implements I_ContentManager {
         int end = range.getEnd();
         lazyArticleBriefsRequestsSent_.put(range.getStart(), true);
         
-        Class<OneHundredArticleBriefs> briefsClass =  lazyArticleBriefs_.get(0);
-        OneHundredArticleBriefs briefs = GWT.create(briefsClass);
+        OneHundredArticleBriefs briefs = briefsCreator.create();
         List<I_ArticleBrief> articleBriefs =  ArticleBriefBuilder.buildBriefs(briefs, start, end);
         requestor.onSuccess(articleBriefs);
       }

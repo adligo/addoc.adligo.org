@@ -1,10 +1,14 @@
 package org.adligo.addoc_example.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 
 import org.adligo.addoc.client.controller.AddocController;
+import org.adligo.addoc.client.i18n.GWTCreateWrapper;
 import org.adligo.addoc.client.i18n.LazyArticleBriefs;
 import org.adligo.addoc.client.i18n.LazyArticleTrees;
+import org.adligo.addoc.client.i18n.OneHundredArticleBriefs;
+import org.adligo.addoc.client.i18n.TenArticleTrees;
 import org.adligo.addoc.client.models.AddocContentMutant;
 import org.adligo.addoc.client.models.ContentCache;
 import org.adligo.addoc.client.models.IdRange;
@@ -42,10 +46,22 @@ public class ExampleEntryPoint implements EntryPoint {
    content.setContentCache(new ContentCache(new SystemTimepeice()));
    
    ContentManager cm = new ContentManager();
-   LazyArticleTrees lat = new LazyArticleTrees(ExampleI18nTreeConstants.class, new IdRange(0,9));
+   LazyArticleTrees lat = new LazyArticleTrees(new GWTCreateWrapper<TenArticleTrees>() {
+      
+      @Override
+      public TenArticleTrees create() {
+        return GWT.create(ExampleI18nTreeConstants.class);
+      }
+    }, new IdRange(0,9));
    cm.setupArticleTrees(Collections.singletonList(lat), 2);
    
-   LazyArticleBriefs lab = new LazyArticleBriefs(ExampleI18nArticleConstants.class, new IdRange(0,99));
+   LazyArticleBriefs lab = new LazyArticleBriefs(new GWTCreateWrapper<OneHundredArticleBriefs>() {
+     
+     @Override
+     public OneHundredArticleBriefs create() {
+       return GWT.create(ExampleI18nArticleConstants.class);
+     }
+   }, new IdRange(0,99));
    cm.setupArticleBriefs(Collections.singletonList(lab), 6);
    
    cm.setAddocContent(content);

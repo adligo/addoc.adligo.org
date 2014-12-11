@@ -3,10 +3,10 @@ package org.adligo.addoc.client.i18n;
 import org.adligo.addoc.client.models.IdRange;
 
 public class LazyArticleTrees {
-  private Class<? extends TenArticleTrees> tenArticleTrees_;
+  private GWTCreateWrapper<TenArticleTrees> tenArticleTrees_;
   private IdRange idRange_;
   
-  public LazyArticleTrees(Class<? extends TenArticleTrees> tenArticleTrees, IdRange idRange) {
+  public LazyArticleTrees(GWTCreateWrapper<TenArticleTrees> tenArticleTrees, IdRange idRange) {
     tenArticleTrees_ = tenArticleTrees;
     idRange_ = idRange;
     if (idRange_.getRange() != 10) {
@@ -14,7 +14,7 @@ public class LazyArticleTrees {
     }
   }
    
-  public Class<? extends TenArticleTrees> getTenArticleTrees() {
+  public GWTCreateWrapper<TenArticleTrees> getTenArticleTrees() {
     return tenArticleTrees_;
   }
   
