@@ -46,6 +46,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   private I_ArticleTree currentTree_;
   private I_ArticleBrief currentArticleBrief_;
   private I_ArticleBrief currentArticlePreviousBrief_;
+  private int [] currentTreeSelection_;
   private I_Article currentArticle_;
   private I_Article currentArticlePreviousArticle_;
   
@@ -53,6 +54,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   private List<I_AdView> adViews_ = new ArrayList<I_AdView>();
   private String browserWindowUrl_;
   private String [] lastTreePath_;
+  private ArticlePresenterRoot root_;
   
   public I_MenuView getMenuView() {
     return menuView_;
@@ -96,6 +98,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
       dialogView_.setMessageText("ToDo History support for incoming history links is not availiable yet.", true);
       dialogView_.show();
     } else {
+      root_ = ArticlePresenterRoot.LoadLatestTreeWithDefaultArticle;
       requestedTreeId_ = contentManager_.getLatestTree();
       //note when I get to change tree from a event this needs to occur
       //cache_.reduceArticleCache(Collections.singleton(requestedTreeId_), 10000, millisecondsPast);
@@ -244,23 +247,38 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
     if (previousVersions.size() >= 1) {
       loadArticleBriefs(previousVersions);
     }
-    List<Integer> topIds = currentTree_.getTop();
-    Integer topId = topIds.get(0);
-    if (currentArticleBrief_ == null) {
-      loadCurrentArticle(topId);
-      lastTreePath_ = new String[] {currentArticleBrief_.getName()};
-    } else if (currentArticleBrief_.getId() != topId) {
-      loadCurrentArticle(topId);
-    } 
+    loadArticlesForArticleView();
     if (requestedArticleBriefs_.size() == 0) {
       displayTree();
     }
   }
+  /**
+   * if loading, load the articles for the 
+   * article view (article, previous article).
+   */
+  public void loadArticlesForArticleView() {
+    if (root_ != null) {
+      switch (root_) {
+        case LoadLatestTreeWithDefaultArticle:
+          List<Integer> topIds = currentTree_.getTop();
+          Integer topId = topIds.get(0);
+          currentTreeSelection_ = new int[] {topId};
+          if (currentArticleBrief_ == null) {
+            loadCurrentArticle();
+            lastTreePath_ = new String[] {currentArticleBrief_.getName()};
+          } else if (currentArticleBrief_.getId() != topId) {
+            loadCurrentArticle();
+          } 
+          break;
+      }
+    }
+  }
   
   @SuppressWarnings("boxing")
-  public void loadCurrentArticle(Integer topId) {
+  public void loadCurrentArticle() {
     currentArticle_ = null;
-    currentArticleBrief_ = cache_.getArticleBrief(topId);
+    int artcicleId = currentTreeSelection_[currentTreeSelection_.length - 1];
+    currentArticleBrief_ = cache_.getArticleBrief(artcicleId);
     if (currentArticleBrief_ != null) {
       contentManager_.requestArticle(currentArticleBrief_, this);
     }
@@ -338,6 +356,8 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
     }
     articleView_.setTopicUrl(baseUrl + "#topic/"  + getTreePathAsUrl());
     articleView_.setArticleUrl(baseUrl + "#article/"  + currentArticle_.getId());
+    List<Integer> subs = currentTree_.getIds(currentTreeSelection_);
+    //articleView_.set
   }
   
   public String getTreePathAsUrl() {
@@ -351,6 +371,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
     }
     return sb.toString();
   }
+  
   @SuppressWarnings("boxing")
   private void displayTree() {
     articleTreeView_.clearNodes();

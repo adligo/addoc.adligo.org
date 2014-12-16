@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import org.adligo.addoc.client.i18n.AddocI18nConstants;
 import org.adligo.addoc.client.models.I_Article;
+import org.adligo.addoc.client.models.I_ArticleBrief;
 import org.adligo.addoc.client.ui.I_ArticleView;
 import org.adligo.addoc.client.ui.I_Dimension;
 
@@ -37,6 +38,9 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
   private PreviousArticleVersionView previousArticleVersionView_ = null;
   private SimplePanel articleContentPanel_;
   private Label titleLabel;
+  private SimplePanel subArticlesParentPanel_;
+  private int [] articleTreePath_;
+  private List<I_ArticleBrief> subArticles_;
   
   public ArticleView() {
     abs = new AbsolutePanel();
@@ -148,8 +152,9 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     articleHyperlink = new Anchor("www.adligo.org/org_docs/index#article/0");
     backlinkInnerPanel.add(articleHyperlink);
     
-    SimplePanel subArticlesParentPanel = new SimplePanel();
-    articlePanel.add(subArticlesParentPanel);
+    subArticlesParentPanel_ = new SimplePanel();
+    articlePanel.add(subArticlesParentPanel_);
+    subArticlesParentPanel_.setHeight("0px");
     
     SimplePanel articleRightIndentPanel = new SimplePanel();
     middleHorizontalPanel.add(articleRightIndentPanel);
@@ -267,8 +272,9 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
 
 
   @Override
-  public void addChildArticles(List<I_Article> articles) {
-    // TODO Auto-generated method stub
+  public void setChildArticles(int [] articleTreePath, List<I_ArticleBrief> articles) {
+    int height = articles.size() * 30;
+    subArticlesParentPanel_.setHeight("0px");
     
   }
 

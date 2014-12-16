@@ -1,6 +1,6 @@
 package org.adligo.addoc.client.ui;
 
-import org.adligo.addoc.client.models.I_Article;
+import org.adligo.addoc.client.models.I_ArticleBrief;
 
 import java.util.List;
 
@@ -27,5 +27,5 @@ public interface I_ArticleView extends I_SizedComposite {
   public void setUpEnabled(boolean up);
   public void setPreviousEnabled(boolean p);
   public void setNextEnabled(boolean n);
-  public void addChildArticles(List<I_Article> articles);
+  public void setChildArticles(int [] articleTreePath, List<I_ArticleBrief> articles);
 }
