@@ -1,20 +1,13 @@
 package org.adligo.addoc.client.presenter.content;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.RunAsyncCallback;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 
-import org.adligo.addoc.client.i18n.AddocI18nConstants;
+import org.adligo.addoc.client.bi.I_Browser;
+import org.adligo.addoc.client.bi.I_TextFileCallback;
 import org.adligo.addoc.client.i18n.GWTCreateWrapper;
 import org.adligo.addoc.client.i18n.LazyArticleBriefs;
 import org.adligo.addoc.client.i18n.LazyArticleTrees;
 import org.adligo.addoc.client.i18n.OneHundredArticleBriefs;
 import org.adligo.addoc.client.i18n.TenArticleTrees;
-import org.adligo.addoc.client.models.ArticleBriefBuilder;
 import org.adligo.addoc.client.models.ArticleBuilder;
 import org.adligo.addoc.client.models.ArticleTreesBuilder;
 import org.adligo.addoc.client.models.I_AddocContent;
@@ -44,10 +37,12 @@ import java.util.TreeSet;
  * @author scott
  *
  */
-public class ContentManager implements I_ContentManager, RequestCallback {
-  private static final AddocI18nConstants CONSTANTS = GWT.create(AddocI18nConstants.class);
-  
-  private String baseArticleUrl_ = CONSTANTS.getArticleRelativeUrl();
+public class ContentManager implements I_ContentManager, I_TextFileCallback {
+  public static final String CONTENT_MANAGER_REQUIRES_A_ARTICLE_BASE_URL = "ContentManager requires a articleBaseUrl";
+
+  public static final String CONTENT_MANAGER_REQUIRES_A_BROWSER_INSTANCE = "ContentManager requires a browser instance.";
+
+  private String baseArticleUrl_;
   private int latestTree_;
   private int lastArticle_;
   private I_AddocContent addocContent_;
@@ -59,6 +54,23 @@ public class ContentManager implements I_ContentManager, RequestCallback {
   private Map<Integer, I_ArticleBrief> articleBriefs_ = new HashMap<Integer,I_ArticleBrief>();
   private I_ArticleRequestor articleRequest_ = null;
   private I_ArticleBrief articleRequestBrief_ = null;
+  private I_Browser browser_;
+  private ArticleBriefsCallback articleBriefsCallback_;
+  private TreesCallback treesCallback_;
+  private ArticleTreesBuilder treeBuilder_ = new ArticleTreesBuilder();
+  
+  public ContentManager(I_Browser browser, String articleBaseUrl) {
+    if (browser == null) {
+      throw new IllegalArgumentException(CONTENT_MANAGER_REQUIRES_A_BROWSER_INSTANCE);
+    }
+    if (articleBaseUrl == null) {
+      throw new IllegalArgumentException(CONTENT_MANAGER_REQUIRES_A_ARTICLE_BASE_URL);
+    }
+    browser_ = browser;
+    baseArticleUrl_ = articleBaseUrl;
+    treesCallback_ = new TreesCallback(articleTrees_);
+    articleBriefsCallback_ = new ArticleBriefsCallback();
+  }
   
   @SuppressWarnings({"rawtypes", "unchecked", "boxing"})
   public void setupArticleTrees(List<LazyArticleTrees> lazyTrees, int latestTree) {
@@ -93,12 +105,10 @@ public class ContentManager implements I_ContentManager, RequestCallback {
     lazyArticleBriefs_ = new IdRangeBTreeLookup(map);
   }
 
-
   @Override
   public int getLatestTree() {
     return latestTree_;
   }
-
 
   @Override
   public I_AddocContent getAddocContent() {
@@ -116,27 +126,12 @@ public class ContentManager implements I_ContentManager, RequestCallback {
     final IdRange ids = lazyArticleTrees_.getIds(treeId);
     final GWTCreateWrapper<TenArticleTrees> treesClass = lazyArticleTrees_.get(treeId);
     
-    GWT.runAsync(new RunAsyncCallback() {
-      public void onFailure(Throwable caught) {
-        requestor.onFailure(caught);
-      }
-
-      public void onSuccess() {
-        TenArticleTrees trees = treesClass.create();
-        int end = ids.getEnd();
-        if (end > latestTree_) {
-          end = latestTree_;
-        }
-        Map<Integer,I_ArticleTree> treeInstances = ArticleTreesBuilder.buildTrees(trees, ids.getStart(), end);
-        articleTrees_.putAll(treeInstances);
-        
-        I_ArticleTree tree = articleTrees_.get(treeId);
-        if (tree != null) {
-          requestor.onSuccess(tree);
-          return;
-        }
-      }
-    });
+    treesCallback_.setIds(ids);
+    treesCallback_.setRequestor(requestor);
+    treesCallback_.setTreeId(treeId);
+    treesCallback_.setTreesClass(treesClass);
+    treesCallback_.setTreeBuilder(treeBuilder_);
+    browser_.runAsync(treesCallback_);
   }
 
   /**
@@ -187,52 +182,50 @@ public class ContentManager implements I_ContentManager, RequestCallback {
     articleRequestBrief_ = articleBrief;
     articleRequest_ = requestor;
     int articleId = articleBrief.getId();
-    RequestBuilder rb = new RequestBuilder(RequestBuilder.GET,
-        baseArticleUrl_ + "/a" + articleId + ".txt");
-    rb.setCallback(this);
-    try {
-      rb.send();
-    } catch (RequestException e) {
-      requestor.onFailure(e);
-    }
+    browser_.doGet(baseArticleUrl_ + "/a" + articleId + ".txt", this);
   }
 
   public void setAddocContent(I_AddocContent addocContent) {
     this.addocContent_ = addocContent;
   }
   
+  @SuppressWarnings("boxing")
   private void loadArticleBriefs(final GWTCreateWrapper<OneHundredArticleBriefs> briefsCreator,final IdRange range, final I_ArticleBriefRequestor requestor) {
-    GWT.runAsync(new RunAsyncCallback() {
-      public void onFailure(Throwable caught) {
-        requestor.onFailure(caught);
-      }
+    
+    articleBriefsCallback_.setBriefsCreator(briefsCreator);
+    articleBriefsCallback_.setRange(range);
+    articleBriefsCallback_.setRequestor(requestor);
+    lazyArticleBriefsRequestsSent_.put(range.getStart(), true);
+    browser_.runAsync(articleBriefsCallback_);
+  }
 
-      public void onSuccess() {
-        int start = range.getStart();
-        int end = range.getEnd();
-        lazyArticleBriefsRequestsSent_.put(range.getStart(), true);
-        
-        OneHundredArticleBriefs briefs = briefsCreator.create();
-        List<I_ArticleBrief> articleBriefs =  ArticleBriefBuilder.buildBriefs(briefs, start, end);
-        requestor.onSuccess(articleBriefs);
-      }
-    });
+  public ArticleBriefsCallback getArticleBriefsCallback() {
+    return articleBriefsCallback_;
+  }
+  
+  public TreesCallback getTreesCallback() {
+    return treesCallback_;
   }
 
   @Override
-  public void onResponseReceived(Request request, Response response) {
-    
-    String text = response.getText();
+  public void onSuccess(String text) {
     ArticleBuilder ab = new ArticleBuilder();
     I_Article article = ab.build(articleRequestBrief_, text);
     articleRequestBrief_ = null;
     articleRequest_.onSuccess(article);
-    
   }
 
   @Override
-  public void onError(Request request, Throwable exception) {
+  public void onFailure(Throwable error) {
     articleRequestBrief_ = null;
-    articleRequest_.onFailure(exception);
+    articleRequest_.onFailure(error);
+  }
+
+  public ArticleTreesBuilder getTreeBuilder() {
+    return treeBuilder_;
+  }
+
+  public void setTreeBuilder(ArticleTreesBuilder treeBuilder) {
+    this.treeBuilder_ = treeBuilder;
   }
 }

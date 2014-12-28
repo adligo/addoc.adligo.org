@@ -3,18 +3,23 @@ package org.adligo.addoc.client.view;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Frame;
 
-import org.adligo.addoc.client.ui.I_AdView;
+import org.adligo.addoc.client.ui.I_FrameView;
 
-public class AdView extends Frame implements I_AdView {
+public class FrameView extends Frame implements I_FrameView {
   private String url_;
   
-  public AdView(String url) {
+  public FrameView(String url) {
     super(url);
     url_ = url;
     super.setStyleName(".adFrame");
     Element adElement = super.getElement();
     adElement.setAttribute("seamless", "seamless");
     adElement.setAttribute("scrolling", "no");
+    adElement.setAttribute("border", "0");
+    adElement.setAttribute("frameborder", "0");
+    adElement.setAttribute("hspace", "0");
+    adElement.setAttribute("vspace", "0");
+          
   }
 
   @Override

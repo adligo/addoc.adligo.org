@@ -2,14 +2,13 @@ package org.adligo.addoc.client.models;
 
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ArticleTreesBuilder {
   
-  public static Map<Integer, I_ArticleTree> buildTrees(ConstantsWithLookup lookup, int startId, int endId) {
+  @SuppressWarnings("boxing")
+  private static Map<Integer, I_ArticleTree> buildTrees(ConstantsWithLookup lookup, int startId, int endId) {
     Map<Integer, I_ArticleTree> toRet = new HashMap<Integer, I_ArticleTree>();
     for (int i = startId; i <= endId; i++) {
       
@@ -29,4 +28,15 @@ public class ArticleTreesBuilder {
     return new ArticleTree(tree);
   }
   
+  /**
+   * This is just a instance method to wrap 
+   * buildTrees for easier mocking
+   * @param lookup
+   * @param startId
+   * @param endId
+   * @return
+   */
+  public Map<Integer, I_ArticleTree> buildTreeMap(ConstantsWithLookup lookup, int startId, int endId) {
+    return ArticleTreesBuilder.buildTrees(lookup, startId, endId);
+  }
 }

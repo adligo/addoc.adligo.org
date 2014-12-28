@@ -4,10 +4,11 @@ import org.adligo.addoc.client.models.I_ArticleBrief;
 
 import java.util.List;
 
-public interface I_ArticleView extends I_SizedComposite {
+public interface I_ArticleView {
   public void setTitle(String title);
-  public void setLastModified(String lastModified);
-  public void setPreviousVersion(String previousDate);
+  public void setHeight(String height);
+  
+  public void setVersions(String previousDate, String lastModified);
   
   public void setTextHtml(String tHtml);
   /**
@@ -22,8 +23,6 @@ public interface I_ArticleView extends I_SizedComposite {
    * @param url
    */
   public void setArticleUrl(String url);
-  
-  public void setUpdated(String niceDate);
   public void setUpEnabled(boolean up);
   public void setPreviousEnabled(boolean p);
   public void setNextEnabled(boolean n);

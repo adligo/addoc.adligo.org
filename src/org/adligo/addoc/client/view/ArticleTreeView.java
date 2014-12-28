@@ -27,6 +27,7 @@ public class ArticleTreeView extends Composite implements I_ArticleTreeView {
   private TreeNavigationView navView_;
   private Tree tree_;
   private I_AddocHandler handler_;
+  private Image backroundPngImage_;
   
   public ArticleTreeView() {
     
@@ -34,10 +35,10 @@ public class ArticleTreeView extends Composite implements I_ArticleTreeView {
     initWidget(absolutePanel);
     absolutePanel.setSize("480px", "480px");
     
-    Image backroundPngImage = new Image("images/Backround.png");
-    backroundPngImage.setStyleName("articleView");
-    backroundPngImage.setSize("100%", "100%");
-    absolutePanel.add(backroundPngImage,0,0);
+    backroundPngImage_ = new Image(StyleDefaults.BACKROUND_IMAGE_URL);
+    backroundPngImage_.setStyleName("articleView");
+    backroundPngImage_.setSize("100%", "100%");
+    absolutePanel.add(backroundPngImage_,0,0);
     
     tree_ = new Tree();
     tree_.setTitle(((AddocI18nConstants) GWT.create(AddocI18nConstants.class)).getIndex());
@@ -58,7 +59,7 @@ public class ArticleTreeView extends Composite implements I_ArticleTreeView {
     navView_.setup();
     simplePanel.add(navView_);
     
-    Image image = new Image("images/close.png");
+    Image image = new Image(StyleDefaults.CLOSE_IMAGE_URL);
     image.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
         hide();

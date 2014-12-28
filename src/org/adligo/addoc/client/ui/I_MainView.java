@@ -11,9 +11,4 @@ public interface I_MainView {
   public void setLeftAdColumnView(I_AdColumnView adColumnView);
   public I_MenuView getMenuView();
   public void show();
-  /**
-   * the browsers window url
-   * @return
-   */
-  public String getBrowserUrl();
 }

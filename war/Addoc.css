@@ -1,3 +1,7 @@
+/*
+This style sheet is used by the browser in the usual way
+and is NOT parsed by java script.
+*/
 .titleImageBackround {
 	background-color: wheat;
 }
@@ -7,12 +11,16 @@
 	font-size: 18px;
 	font-family: "Times New Roman", Times, serif;
 	height: 30px;
-	
+	width: 1300px;
 }
 
 .menuBarIndex {
 	font-size: 24px;
 	font-family: "Times New Roman", Times, serif;
+}
+
+.menuBarEndSpacer {
+	width: 6px;
 }
 
 .adFrame {
@@ -21,6 +29,7 @@
 	-ms-overflow-x: hidden;
 	-ms-overflow-y: hidden;
 }
+
 .articleTitle {
 	font-size: 24px;
 	font-family: "Times New Roman", Times, serif;
@@ -35,11 +44,26 @@
 	font-size: 18px;
 	font-family: "Times New Roman", Times, serif;
 }
+
 .articleView {
+  height: 500px;
+  width: 880px;
   background-color: wheat;
 }
+
 .dialogView {
   font-size: 18px;
   font-family: "Times New Roman", Times, serif;
   background-color: wheat;
+}
+.menuBarSpacer {
+	width: 6px;
+}
+.articleSpacer {
+	height: 10px;
+	width: 10px;
+}
+.articleSectionSpacer {
+	height: 25px;
+	width: 25px;
 }

@@ -4,24 +4,24 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import org.adligo.addoc.client.i18n.AddocI18nConstants;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 
-public class PreviousArticleVersionView extends Composite {
+public class ArticleVersionView extends Composite {
   private AddocI18nConstants CONSTANTS = GWT.create(AddocI18nConstants.class);
   
-  private Anchor previousVersionAnchor_;
+  private Label versionLabel_;
   
-  public PreviousArticleVersionView() {
+  public ArticleVersionView() {
     
     HorizontalPanel horizontalPanel = new HorizontalPanel();
     initWidget(horizontalPanel);
     
-    Label previousVersionLabel = new Label(CONSTANTS.getPreviousVersion());
+    Label previousVersionLabel = new Label(CONSTANTS.getLastModified());
     previousVersionLabel.setWordWrap(false);
     horizontalPanel.add(previousVersionLabel);
     horizontalPanel.setCellHorizontalAlignment(previousVersionLabel, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -30,16 +30,12 @@ public class PreviousArticleVersionView extends Composite {
     simplePanel.setStyleName("articleSpacer");
     horizontalPanel.add(simplePanel);
     
-    previousVersionAnchor_ = new Anchor("12/31/2999");
-    previousVersionAnchor_.setWordWrap(false);
-    horizontalPanel.add(previousVersionAnchor_);
-  }
-
-  public void addVersionClickHandler(ClickHandler handler) {
-    previousVersionAnchor_.addClickHandler(handler);
+    versionLabel_ = new Label("12/31/2999");
+    versionLabel_.setWordWrap(false);
+    horizontalPanel.add(versionLabel_);
   }
 
   public void setText(String text) {
-    previousVersionAnchor_.setText(text);
+    versionLabel_.setText(text);
   }
 }

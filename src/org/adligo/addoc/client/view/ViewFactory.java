@@ -8,9 +8,15 @@ import org.adligo.addoc.client.ui.I_MainView;
 import org.adligo.addoc.client.ui.I_MenuView;
 import org.adligo.addoc.client.ui.I_ViewFactory;
 import org.adligo.addoc.client.view.dialog.DialogView;
+import org.adligo.css.shared.models.I_StyleSheet;
 
 public class ViewFactory implements I_ViewFactory {
   private DialogView dialogView_;
+  private I_StyleSheet stylesheet_;
+  
+  public ViewFactory(I_StyleSheet stylesheet) {
+    stylesheet_ = stylesheet;
+  }
   
   @Override
   public I_MainView createMainView() {

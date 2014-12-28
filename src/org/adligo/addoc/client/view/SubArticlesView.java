@@ -3,13 +3,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import org.adligo.addoc.client.i18n.AddocI18nConstants;
 
-public class SubArticlesView extends AbstractSizedView {
+public class SubArticlesView extends Composite {
   private static final AddocI18nConstants CONSTANTS = GWT.create(AddocI18nConstants.class);
   private VerticalPanel subArticlePanel;
   
@@ -28,9 +29,11 @@ public class SubArticlesView extends AbstractSizedView {
     verticalPanel.setCellHorizontalAlignment(subArticlePanel, HasHorizontalAlignment.ALIGN_CENTER);
     verticalPanel.setCellWidth(subArticlePanel, "50%");
     
+    /*
     addArticle("Sub-Article One");
     addArticle("Sub-Article Two");
     addArticle("Sub-Article Three");
+    */
   }
 
   public void addArticle(final String articleName) {

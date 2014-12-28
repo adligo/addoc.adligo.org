@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -23,84 +24,75 @@ import org.adligo.addoc.client.ui.I_Dimension;
 
 import java.util.List;
 
-public class ArticleView extends AbstractSizedView implements I_ArticleView {
+public class ArticleView extends Composite implements I_ArticleView {
   private static final AddocI18nConstants CONSTANTS = GWT.create(AddocI18nConstants.class);
-  
-  private Label dateLabel;
-  private Anchor topicHyperlink;
-  private Anchor articleHyperlink;
-  private Anchor upAnchor;
-  private Anchor previousAnchor;
-  private Anchor nextAnchor;
-  private AbsolutePanel abs;
-  private VerticalPanel verticalPanel;
-  private SimplePanel previousVersionPanel_;
+  private Anchor topicHyperlink_;
+  private Anchor articleHyperlink_;
+  private Anchor upAnchor_;
+  private Anchor previousAnchor_;
+  private Anchor nextAnchor_;
+  private AbsolutePanel abs_;
+  private VerticalPanel verticalPanel_;
+  private SimplePanel lastModifiedPanel_;
+  private ArticleVersionView lastModifiedView_ = new ArticleVersionView();
   private PreviousArticleVersionView previousArticleVersionView_ = null;
   private SimplePanel articleContentPanel_;
-  private Label titleLabel;
+  private Label titleLabel_;
   private SimplePanel subArticlesParentPanel_;
   private int [] articleTreePath_;
   private List<I_ArticleBrief> subArticles_;
+  private HorizontalPanel versionPanel_;
+  
   
   public ArticleView() {
-    abs = new AbsolutePanel();
-    abs.setStyleName("articleView");
-    initWidget(abs);
+    abs_ = new AbsolutePanel();
+    abs_.setStyleName("articleView");
+    initWidget(abs_);
     
     Image backroundPngImage = new Image("images/Backround.png");
     backroundPngImage.setStyleName("articleView");
     backroundPngImage.setSize("100%", "100%");
-    abs.add(backroundPngImage,0,0);
+    abs_.add(backroundPngImage,0,0);
     
-    verticalPanel = new VerticalPanel();
-    abs.add(verticalPanel,0,0);
-    Element element = verticalPanel.getElement();
+    verticalPanel_ = new VerticalPanel();
+    abs_.add(verticalPanel_,0,0);
+    verticalPanel_.setWidth("100%");
+    Element element = verticalPanel_.getElement();
     element.setAttribute("z-index", "1000");
     
     HorizontalPanel topHorizontalPanel = new HorizontalPanel();
-    verticalPanel.add(topHorizontalPanel);
+    verticalPanel_.add(topHorizontalPanel);
     topHorizontalPanel.setSize("100%", "");
     
     VerticalPanel verticalPanel_1 = new VerticalPanel();
     topHorizontalPanel.add(verticalPanel_1);
     verticalPanel_1.setWidth("100%");
     
-    titleLabel = new Label("Article Title");
-    titleLabel.setStyleName("articleTitle");
-    verticalPanel_1.add(titleLabel);
-    verticalPanel_1.setCellHorizontalAlignment(titleLabel, HasHorizontalAlignment.ALIGN_CENTER);
-    titleLabel.setWidth("");
+    titleLabel_ = new Label("Article Title");
+    titleLabel_.setStyleName("articleTitle");
+    verticalPanel_1.add(titleLabel_);
+    verticalPanel_1.setCellHorizontalAlignment(titleLabel_, HasHorizontalAlignment.ALIGN_CENTER);
+    titleLabel_.setWidth("");
     
-    HorizontalPanel horizontalPanel = new HorizontalPanel();
-    horizontalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-    verticalPanel_1.add(horizontalPanel);
-    verticalPanel_1.setCellWidth(horizontalPanel, CONSTANTS.horizontalPanel_width());
-    verticalPanel_1.setCellHorizontalAlignment(horizontalPanel, HasHorizontalAlignment.ALIGN_CENTER);
-    horizontalPanel.setWidth("");
+    versionPanel_ = new HorizontalPanel();
+    versionPanel_.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+    verticalPanel_1.add(versionPanel_);
+    verticalPanel_1.setCellWidth(versionPanel_, "100%");
+    verticalPanel_1.setCellHorizontalAlignment(versionPanel_, HasHorizontalAlignment.ALIGN_CENTER);
+    versionPanel_.setWidth("100%");
     
-    Label lastModifiedLabel = new Label(CONSTANTS.getLastModified());
-    lastModifiedLabel.setWordWrap(false);
-    horizontalPanel.add(lastModifiedLabel);
-    horizontalPanel.setCellHorizontalAlignment(lastModifiedLabel, HasHorizontalAlignment.ALIGN_RIGHT);
+    lastModifiedPanel_ = new SimplePanel();
+    versionPanel_.add(lastModifiedPanel_);
+    versionPanel_.setCellHorizontalAlignment(lastModifiedPanel_, HasHorizontalAlignment.ALIGN_CENTER);
     
-    SimplePanel simplePanel = new SimplePanel();
-    horizontalPanel.add(simplePanel);
-    horizontalPanel.setCellHorizontalAlignment(simplePanel, HasHorizontalAlignment.ALIGN_CENTER);
-    simplePanel.setWidth("10px");
-    
-    dateLabel = new Label("12/31/2999");
-    dateLabel.setWordWrap(false);
-    horizontalPanel.add(dateLabel);
-    
-    previousVersionPanel_ = new SimplePanel();
-    verticalPanel_1.add(previousVersionPanel_);
-    verticalPanel_1.setCellHorizontalAlignment(previousVersionPanel_, HasHorizontalAlignment.ALIGN_CENTER);
-    verticalPanel_1.setCellWidth(previousVersionPanel_, CONSTANTS.previousVersionPanel__width());
+    SimplePanel simplePanel_3 = new SimplePanel();
+    simplePanel_3.setStyleName("articleSectionSpacer");
+    verticalPanel_.add(simplePanel_3);
     
     HorizontalPanel middleHorizontalPanel = new HorizontalPanel();
-    verticalPanel.add(middleHorizontalPanel);
+    verticalPanel_.add(middleHorizontalPanel);
     middleHorizontalPanel.setWidth("100%");
-    verticalPanel.setCellWidth(middleHorizontalPanel, "100%");
+    verticalPanel_.setCellWidth(middleHorizontalPanel, "100%");
     
     SimplePanel articleLeftIndentPanel = new SimplePanel();
     middleHorizontalPanel.add(articleLeftIndentPanel);
@@ -115,11 +107,18 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     articlePanel.add(articleContentPanel_);
     articlePanel.setWidth("100%");
     articlePanel.setCellWidth(articleContentPanel_, "100%");
+    SimplePanel spacer = new SimplePanel();
+    spacer.setStyleName("articleSectionSpacer");
+    articlePanel.add(spacer);
     
     VerticalPanel backLinksPanel = new VerticalPanel();
     articlePanel.add(backLinksPanel);
     articlePanel.setCellWidth(backLinksPanel, "100%");
     backLinksPanel.setWidth("100%");
+    
+    SimplePanel spacer2 = new SimplePanel();
+    spacer2.setStyleName("articleSectionSpacer");
+    articlePanel.add(spacer2);
     
     Label backlinksLabel = new Label(CONSTANTS.getBacklinks());
     backlinksLabel.setStyleName("articleSection");
@@ -127,30 +126,27 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     backLinksPanel.setCellHorizontalAlignment(backlinksLabel, HasHorizontalAlignment.ALIGN_CENTER);
     backLinksPanel.setCellVerticalAlignment(backlinksLabel, HasVerticalAlignment.ALIGN_MIDDLE);
     
-
-    
     VerticalPanel backlinkInnerPanel = new VerticalPanel();
     backLinksPanel.add(backlinkInnerPanel);
     backLinksPanel.setCellWidth(backlinkInnerPanel, "100%");
     backLinksPanel.setCellHorizontalAlignment(backlinkInnerPanel, HasHorizontalAlignment.ALIGN_CENTER);
-    
     
     Label lblNewLabel_1 = new Label(CONSTANTS.getTopic());
     lblNewLabel_1.setWordWrap(false);
     lblNewLabel_1.setStyleName("articleSection");
     backlinkInnerPanel.add(lblNewLabel_1);
     
-    topicHyperlink = new Anchor("www.adligo.org/org_docs/index#topic/article");
-    topicHyperlink.setWordWrap(false);
-    backlinkInnerPanel.add(topicHyperlink);
+    topicHyperlink_ = new Anchor("www.adligo.org/org_docs/index#topic/article");
+    topicHyperlink_.setWordWrap(false);
+    backlinkInnerPanel.add(topicHyperlink_);
     
     Label lblNewLabel_3 = new Label(CONSTANTS.getArticle());
     lblNewLabel_3.setStyleName("articleSection");
     lblNewLabel_3.setWordWrap(false);
     backlinkInnerPanel.add(lblNewLabel_3);
     
-    articleHyperlink = new Anchor("www.adligo.org/org_docs/index#article/0");
-    backlinkInnerPanel.add(articleHyperlink);
+    articleHyperlink_ = new Anchor("www.adligo.org/org_docs/index#article/0");
+    backlinkInnerPanel.add(articleHyperlink_);
     
     subArticlesParentPanel_ = new SimplePanel();
     articlePanel.add(subArticlesParentPanel_);
@@ -161,10 +157,14 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     middleHorizontalPanel.setCellHorizontalAlignment(articleRightIndentPanel, HasHorizontalAlignment.ALIGN_RIGHT);
     articleRightIndentPanel.setWidth("4px");
     
+    SimplePanel simplePanel_4 = new SimplePanel();
+    simplePanel_4.setStyleName("articleSectionSpacer");
+    verticalPanel_.add(simplePanel_4);
+    
     HorizontalPanel bottomHorizontalPanel = new HorizontalPanel();
-    verticalPanel.add(bottomHorizontalPanel);
+    verticalPanel_.add(bottomHorizontalPanel);
     bottomHorizontalPanel.setWidth("100%");
-    verticalPanel.setCellVerticalAlignment(bottomHorizontalPanel, HasVerticalAlignment.ALIGN_BOTTOM);
+    verticalPanel_.setCellVerticalAlignment(bottomHorizontalPanel, HasVerticalAlignment.ALIGN_BOTTOM);
     
     VerticalPanel verticalPanel_2 = new VerticalPanel();
     bottomHorizontalPanel.add(verticalPanel_2);
@@ -176,15 +176,15 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     verticalPanel_2.add(navigationLabel);
     verticalPanel_2.setCellHorizontalAlignment(navigationLabel, HasHorizontalAlignment.ALIGN_CENTER);
     
-    upAnchor = new Anchor(CONSTANTS.getUp());
-    upAnchor.addClickHandler(new ClickHandler() {
+    upAnchor_ = new Anchor(CONSTANTS.getUp());
+    upAnchor_.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
       }
     });
-    upAnchor.setWordWrap(false);
-    upAnchor.setStyleName("articleSection");
-    verticalPanel_2.add(upAnchor);
-    verticalPanel_2.setCellHorizontalAlignment(upAnchor, HasHorizontalAlignment.ALIGN_CENTER);
+    upAnchor_.setWordWrap(false);
+    upAnchor_.setStyleName("articleSection");
+    verticalPanel_2.add(upAnchor_);
+    verticalPanel_2.setCellHorizontalAlignment(upAnchor_, HasHorizontalAlignment.ALIGN_CENTER);
     
     SimplePanel simplePanel_2 = new SimplePanel();
     verticalPanel_2.add(simplePanel_2);
@@ -195,14 +195,14 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     simplePanel_2.setWidget(horizontalPanel_1);
     horizontalPanel_1.setSize("", "");
     
-    previousAnchor = new Anchor(CONSTANTS.getPrevious());
-    previousAnchor.addClickHandler(new ClickHandler() {
+    previousAnchor_ = new Anchor(CONSTANTS.getPrevious());
+    previousAnchor_.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
       }
     });
-    previousAnchor.setStyleName("articleSection");
-    horizontalPanel_1.add(previousAnchor);
-    horizontalPanel_1.setCellHorizontalAlignment(previousAnchor, HasHorizontalAlignment.ALIGN_RIGHT);
+    previousAnchor_.setStyleName("articleSection");
+    horizontalPanel_1.add(previousAnchor_);
+    horizontalPanel_1.setCellHorizontalAlignment(previousAnchor_, HasHorizontalAlignment.ALIGN_RIGHT);
     
     SimplePanel simplePanel_1 = new SimplePanel();
     horizontalPanel_1.add(simplePanel_1);
@@ -210,13 +210,13 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     horizontalPanel_1.setCellVerticalAlignment(simplePanel_1, HasVerticalAlignment.ALIGN_MIDDLE);
     simplePanel_1.setWidth("10px");
     
-    nextAnchor = new Anchor(CONSTANTS.getNext());
-    nextAnchor.addClickHandler(new ClickHandler() {
+    nextAnchor_ = new Anchor(CONSTANTS.getNext());
+    nextAnchor_.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
       }
     });
-    nextAnchor.setStyleName("articleSection");
-    horizontalPanel_1.add(nextAnchor);
+    nextAnchor_.setStyleName("articleSection");
+    horizontalPanel_1.add(nextAnchor_);
     setStyleName("article");
   }
 
@@ -230,44 +230,39 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
 
   @Override
   public void setTopicUrl(String url) {
-    topicHyperlink.setText(url);
-    topicHyperlink.setHref(url);
+    topicHyperlink_.setText(url);
+    topicHyperlink_.setHref(url);
   }
 
   @Override
   public void setArticleUrl(String url) {
-    articleHyperlink.setText(url);
-    articleHyperlink.setHref(url);
-  }
-
-  @Override
-  public void setUpdated(String niceDate) {
-    dateLabel.setText(niceDate);
+    articleHyperlink_.setText(url);
+    articleHyperlink_.setHref(url);
   }
 
   @Override
   public void setUpEnabled(boolean up) {
-     upAnchor.setVisible(up);
+     upAnchor_.setVisible(up);
   }
 
   @Override
   public void setPreviousEnabled(boolean p) {
-    previousAnchor.setVisible(p);
+    previousAnchor_.setVisible(p);
     if (p) {
       if (previousArticleVersionView_ == null) {
         previousArticleVersionView_ = new PreviousArticleVersionView();
       }
-      previousVersionPanel_.add(previousArticleVersionView_);
+      //previousVersionPanel_.add(previousArticleVersionView_);
     } else {
       if (previousArticleVersionView_ != null) {
-        previousVersionPanel_.clear();
+        //previousVersionPanel_.clear();
       }
     }
   }
 
   @Override
   public void setNextEnabled(boolean n) {
-    nextAnchor.setVisible(n);
+    nextAnchor_.setVisible(n);
   }
 
 
@@ -277,43 +272,38 @@ public class ArticleView extends AbstractSizedView implements I_ArticleView {
     subArticlesParentPanel_.setHeight("0px");
     
   }
-
-  @Override
-  public void setWidth(I_Dimension width) {
-    String widthString = width.getDimension();
-    abs.setWidth(widthString);
-    verticalPanel.setWidth(widthString);
-    super.setWidth(width);
-  }
-
-  @Override
-  public void setHeight(I_Dimension height) {
-    double heightDim = height.getDim();
-    
-    
-    
-    double images = heightDim/360;
-
-    
-    String heightString = height.getDimension();
-    abs.setHeight(heightString);
-    verticalPanel.setHeight(heightString);
-    super.setHeight(height);
-  }
-
-  @Override
-  public void setLastModified(String lastModified) {
-    dateLabel.setText(lastModified);
-  }
+  
 
   @Override
   public void setTitle(String title) {
-    titleLabel.setText(title);
+    titleLabel_.setText(title);
   }
 
   @Override
-  public void setPreviousVersion(String previousDate) {
-    previousArticleVersionView_.setText(previousDate);
+  public void setVersions(String previousDate, String lastModified) {
+	  lastModifiedView_.setText(lastModified);
+	  versionPanel_.clear();
+	  if (previousDate != null) {
+		  if (previousArticleVersionView_ == null) {
+			  previousArticleVersionView_ = new PreviousArticleVersionView();
+		  }
+		  previousArticleVersionView_.setText(previousDate);
+		  versionPanel_.add(previousArticleVersionView_);
+		  versionPanel_.setCellHorizontalAlignment(previousArticleVersionView_, HasHorizontalAlignment.ALIGN_RIGHT);
+		  
+		  SimplePanel spacer = new SimplePanel();
+		  spacer.setStyleName("articleSectionSpacer");
+		  versionPanel_.add(spacer);
+		  
+		  versionPanel_.add(lastModifiedView_);
+		  versionPanel_.setCellHorizontalAlignment(lastModifiedView_, HasHorizontalAlignment.ALIGN_LEFT);
+		  
+	  } else {
+		  versionPanel_.add(lastModifiedView_);
+		  versionPanel_.setCellHorizontalAlignment(lastModifiedView_, HasHorizontalAlignment.ALIGN_CENTER);
+		  
+	  }
+	  
   }
 
 }

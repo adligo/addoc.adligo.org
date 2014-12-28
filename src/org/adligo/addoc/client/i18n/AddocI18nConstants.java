@@ -28,6 +28,4 @@ public interface AddocI18nConstants extends Constants {
   public String getClose();
   public String getOk();
   public String getCancel();
-  String previousVersionPanel__width();
-  String horizontalPanel_width();
 }

@@ -14,15 +14,13 @@ import org.adligo.addoc.client.presenter.content.I_ArticleBriefRequestor;
 import org.adligo.addoc.client.presenter.content.I_ArticleRequestor;
 import org.adligo.addoc.client.presenter.content.I_ArticleTreeRequestor;
 import org.adligo.addoc.client.presenter.content.I_ContentManager;
-import org.adligo.addoc.client.ui.Dimension;
-import org.adligo.addoc.client.ui.I_AdView;
 import org.adligo.addoc.client.ui.I_ArticleTreeView;
 import org.adligo.addoc.client.ui.I_ArticleView;
 import org.adligo.addoc.client.ui.I_DialogView;
+import org.adligo.addoc.client.ui.I_FrameView;
 import org.adligo.addoc.client.ui.I_MenuView;
 import org.adligo.addoc.client.ui.events.AddocEvent;
 import org.adligo.addoc.client.ui.events.I_AddocHandler;
-import org.adligo.addoc.client.view.dialog.DialogView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +49,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   private I_Article currentArticlePreviousArticle_;
   
   private I_DialogView dialogView_;
-  private List<I_AdView> adViews_ = new ArrayList<I_AdView>();
+  private List<I_FrameView> adViews_ = new ArrayList<I_FrameView>();
   private String browserWindowUrl_;
   private String [] lastTreePath_;
   private ArticlePresenterRoot root_;
@@ -165,11 +163,11 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
     // TODO Auto-generated method stub
     
   }
-  public List<I_AdView> getAdViews() {
+  public List<I_FrameView> getAdViews() {
     return adViews_;
   }
   
-  public void setAdViews(List<I_AdView> adViews) {  
+  public void setAdViews(List<I_FrameView> adViews) {  
     adViews_.clear();
     if (adViews != null) {
       adViews_.addAll(adViews);
@@ -177,7 +175,7 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   }
   
   private void reloadAds() {
-    for (I_AdView adView: adViews_) {
+    for (I_FrameView adView: adViews_) {
       adView.reloadAd();
     }
   }
@@ -343,10 +341,13 @@ public class ArticlePresenter implements I_AddocHandler, I_ArticleTreeRequestor,
   
   private void displayArticle() {
     articleView_.setTitle(currentArticle_.getName());
-    articleView_.setLastModified(currentArticle_.getDate());
+    
+    articleView_.setHeight(currentArticle_.getHeight() + "px");
     if (currentArticlePreviousArticle_ != null) {
       articleView_.setPreviousEnabled(true);
-      articleView_.setPreviousVersion(currentArticlePreviousArticle_.getDate());
+      articleView_.setVersions(currentArticlePreviousArticle_.getDate(), currentArticle_.getDate());
+    } else {
+      articleView_.setVersions(null, currentArticle_.getDate());
     }
     articleView_.setTextHtml(currentArticle_.getContent());
     String baseUrl = browserWindowUrl_;

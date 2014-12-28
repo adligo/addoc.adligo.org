@@ -22,6 +22,7 @@ public class ArticleMutant extends ArticleBriefMutant implements I_Article {
     setId(a.getId());
     setPreviousId(a.getPreviousId());
     setContent(a.getContent());
+    setHeight(a.getHeight());
   }
 
 

@@ -2,10 +2,12 @@ package org.adligo.addoc.client.models;
 
 
 public class ArticleBuilder {
-  String date = null;
-  Integer height = null;
+  String date_ = null;
+  Integer height_ = null;
   
   public I_Article build(I_ArticleBrief brief, String text) {
+    date_ = null;
+    height_ = null;
     
     StringBuilder sb = new StringBuilder();
     char [] chars = text.toCharArray();
@@ -31,28 +33,28 @@ public class ArticleBuilder {
       }
     }
     ArticleMutant am = new ArticleMutant(brief);
-    am.setDate(date);
-    am.setHeight(height);
+    am.setDate(date_);
+    am.setHeight(height_);
     am.setContent(sb.toString());
     return new Article(am);
     
   }
   
   private boolean addContent(String line) {
-    if (date == null) {
+    if (date_ == null) {
       if (line.indexOf("date=") != 0) {
         throw new IllegalArgumentException("Articles must have date= in the first line.");
       }  else {
-         date = line.substring(5, line.length());
+         date_ = line.substring(5, line.length());
          return true;
       }
       
-    } else if (height == null) {
+    } else if (height_ == null) {
       if (line.indexOf("height=") != 0) {
         throw new IllegalArgumentException("Articles must have height= in the first line.");
       }  else {
         String heightString = line.substring(7, line.length());
-        height = new Integer(heightString);
+        height_ = new Integer(heightString);
         return true;
       }
     }

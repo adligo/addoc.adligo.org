@@ -12,17 +12,17 @@ package org.adligo.addoc.client.models;
  */
 public class SimplePanelContent implements I_SimplePanelContent {
   /**
-   * the width of the add in pixels
+   * the width of the add from a style sheet 
    */
-  private int width_;
+  private String width_;
   /**
-   * the height of the add in pixels
+   * the height of the add from a style sheet 
    */
-  private int height_;
+  private String height_;
 
   private String url_;
   
-  public SimplePanelContent(int height, int width, String url) {
+  public SimplePanelContent(String height, String width, String url) {
     height_ = height;
     width_ = width;
     url_ = url;
@@ -32,7 +32,7 @@ public class SimplePanelContent implements I_SimplePanelContent {
    * @see org.adligo.addoc.client.models.I_SimplePanelContent#getWidth()
    */
   @Override
-  public int getWidth() {
+  public String getWidth() {
     return width_;
   }
   
@@ -40,7 +40,7 @@ public class SimplePanelContent implements I_SimplePanelContent {
    * @see org.adligo.addoc.client.models.I_SimplePanelContent#getHeight()
    */
   @Override
-  public int getHeight() {
+  public String getHeight() {
     return height_;
   }
   

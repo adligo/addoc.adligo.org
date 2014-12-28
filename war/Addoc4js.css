@@ -1,0 +1,36 @@
+/* 
+This style sheet is used by the 
+web browser in the usual way and 
+parsed by java script so that all style 
+information can be derived from css files.  
+*/
+.menuTitleImage {
+	height: 90px;
+	width: 500px;
+	url: images/beeTitle.png;
+}
+
+.menuLeaderboardAd {
+	height: 92px;
+	width: 730px;
+	url: ads/bidvertiser.com/leaderboard.html;
+}
+
+.columnAd {
+	height: 602px;
+	width: 162px;
+	url: ads/bidvertiser.com/sky.html;
+}
+
+.columnAdSpacer {
+	height: 10px;
+	width: 162px;
+}
+
+.rightColumAds {
+	ad-list: columnAd, columnAdSpacer, columnAd;
+}
+
+.leftColumAds {
+	ad-list: columnAd, columnAdSpacer, columnAd;
+}

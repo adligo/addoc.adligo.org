@@ -2,6 +2,7 @@ package org.adligo.addoc.client.view;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -15,7 +16,7 @@ import org.adligo.addoc.client.ui.I_MenuView;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 
-public class MainView extends AbstractSizedView implements I_MainView {
+public class MainView extends Composite implements I_MainView {
   private SimplePanel menuPanel_;
   private SimplePanel articlePanel_;
   private SimplePanel rightAdColumnPanel_;
@@ -44,6 +45,10 @@ public class MainView extends AbstractSizedView implements I_MainView {
     
     articlePanel_ = new SimplePanel();
     bottomPanel_.add(articlePanel_);
+    bottomPanel_.setCellHeight(articlePanel_, "100%");
+    bottomPanel_.setCellWidth(articlePanel_, "100%");
+    articlePanel_.setStyleName(".articleView");
+    bottomPanel_.setCellVerticalAlignment(articlePanel_, HasVerticalAlignment.ALIGN_TOP);
     bottomPanel_.setCellHorizontalAlignment(articlePanel_, HasHorizontalAlignment.ALIGN_CENTER);
     
     rightAdColumnPanel_ = new SimplePanel();
@@ -53,7 +58,6 @@ public class MainView extends AbstractSizedView implements I_MainView {
 
   public void setMenuView(I_MenuView menuView) {
     menuView_ = menuView;
-    menuPanel_.setWidth(menuView.getWidth());
     menuPanel_.add((Composite) menuView);
     
   }
@@ -64,6 +68,8 @@ public class MainView extends AbstractSizedView implements I_MainView {
 
   public void setArticleView(I_ArticleView articleView) {
     articleView_ = articleView;
+    articlePanel_.clear();
+    articlePanel_.add((Composite) articleView);
   }
 
   public I_AdColumnView getRightAdColumnView() {
@@ -72,6 +78,8 @@ public class MainView extends AbstractSizedView implements I_MainView {
 
   public void setRightAdColumnView(I_AdColumnView adColumnView) {
     rightAdColumnView_ = adColumnView;
+    rightAdColumnPanel_.clear();
+    rightAdColumnPanel_.add((Composite) adColumnView);
   }
 
   public I_AdColumnView getLeftAdColumnView() {
@@ -80,6 +88,8 @@ public class MainView extends AbstractSizedView implements I_MainView {
 
   public void setLeftAdColumnView(I_AdColumnView adColumnView) {
     leftAdColumnView_ = adColumnView;
+    leftAdColumnPanel_.clear();
+    leftAdColumnPanel_.add((Composite) adColumnView);
   }
   
   public I_MenuView getMenuView() {
@@ -88,37 +98,7 @@ public class MainView extends AbstractSizedView implements I_MainView {
 
   @Override
   public void show() {
-    int width = menuView_.getWidthDimension().getDim();
-    int adWidth = 0;
-    int height = 700;
-    if (leftAdColumnView_ != null) {
-      adWidth = leftAdColumnView_.getWidthDimension().getDim();
-     
-      leftAdColumnPanel_.add((Composite) leftAdColumnView_);
-      leftAdColumnPanel_.setWidth(leftAdColumnView_.getWidth());
-      bottomPanel_.setCellWidth(leftAdColumnPanel_, leftAdColumnView_.getWidth());
-    }
-    if (rightAdColumnView_ != null) {
-      adWidth = adWidth + rightAdColumnView_.getWidthDimension().getDim();
-     
-      rightAdColumnPanel_.add((Composite) rightAdColumnView_);
-      rightAdColumnPanel_.setWidth(rightAdColumnView_.getWidth());
-      bottomPanel_.setCellWidth(rightAdColumnPanel_, rightAdColumnView_.getWidth());
-    }
-    int articleWidth = width - adWidth;
-    
-    articleView_.setWidth(new Dimension(articleWidth));
-    articleView_.setHeight(new Dimension(height));
-    articlePanel_.add((Composite) articleView_);
-    articlePanel_.setWidth(articleWidth + "px");
-    bottomPanel_.setCellWidth(articlePanel_, articleWidth + "px");
-    articlePanel_.setHeight(height + "px");
     RootPanel.get().add(this);
   }
 
-  @Override
-  public String getBrowserUrl() {
-    // TODO Auto-generated method stub
-    return Window.Location.getHref();
-  }
 }

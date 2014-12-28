@@ -2,9 +2,9 @@ package org.adligo.addoc.client.models;
 
 public interface I_SimplePanelContent {
 
-  public abstract int getWidth();
+  public abstract String getWidth();
 
-  public abstract int getHeight();
+  public abstract String getHeight();
   /**
    * The relative url to a the content from
    * the module html file.  This may contain html file which contains
