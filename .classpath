@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="FAB_REPO/com.google.gwt/gwt-user-2.6.1.jar"/>
-	<classpathentry kind="var" path="FAB_REPO/com.google.gwt/gwt-dev-2.6.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/css.adligo.org"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/css.adligo.org"/>
 </classpath>
