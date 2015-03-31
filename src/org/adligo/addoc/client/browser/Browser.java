@@ -15,6 +15,12 @@ import org.adligo.addoc.client.bi.I_TextFileCallback;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class stubs out the browser calls for testing.
+ * 
+ * @author scott
+ *
+ */
 public class Browser implements I_Browser {
   
   @Override
