@@ -1,6 +1,7 @@
+.classpath
 /bin/
 /gwt-unitCache/
 /.settings/
 /.gwt/
 /build/
-/classes_e
+/classes_e/
